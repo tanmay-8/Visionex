@@ -17,6 +17,7 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
+  birthDate DateTime @map("birth_date")
   password  String
   profileImageURL String? @map("profile_image_url")
   createdAt DateTime @default(now())
