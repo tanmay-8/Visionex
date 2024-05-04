@@ -3,6 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* custom scrollbar */
+::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+} 
+*{
+  scrollbar-width: none; /* Firefox */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -35,7 +43,8 @@
 
     --radius: 0.5rem;
   }
-/* 
+
+  /* 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;

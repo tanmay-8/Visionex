@@ -6,9 +6,10 @@ import {
     DrawerTrigger,
     DrawerClose,
 } from "../ui/drawer";
-import { MessageSquare, X } from "lucide-react";
+import { MessageSquare, SendHorizonal, X } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppSelector } from "@/lib/redux/hooks";
+import Comment from "./Comment";
 
 const Comments = () => {
     const theme = useAppSelector((state) => state.theme.theme);
@@ -16,8 +17,65 @@ const Comments = () => {
     useEffect(() => {
         setIconColor(GetIconColor());
     }, []);
+    const comments = [
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+        {
+            username: "john_doe",
+            comment: "This is very good idea !",
+        },
+    ];
+
     return (
-        <Drawer className="border-none">
+        <Drawer className={`border-none ${
+            theme === "dark" ? "bg-dark-bg-sec" : "bg-light-bg-sec  py-2"
+        }`}>
             <DrawerTrigger asChild>
                 <div className="flex items-center cursor-pointer">
                     <MessageSquare
@@ -29,19 +87,54 @@ const Comments = () => {
                 </div>
             </DrawerTrigger>
             <DrawerContent
-                className={`border-none bg-${theme}-bg-sec font-main h-[90vh]`}
+                className={`border-none ${
+                    theme === "dark" ? "bg-dark-bg-sec" : "bg-light-bg-sec"
+                } font-main -mt-4`}
             >
                 {" "}
                 <div
                     className={`h-[80vh] p-4 md:px-8 space-y-4 overflow-y-auto text-gray-800 flex justify-center${
                         theme === "dark" ? "text-gray-300" : ""
-                    } `}
+                    } custom-scrollbar`}
                 >
-                    <div className="lg:min-w-[800px] border h-80 mx-auto">
-                      <div>
-                        <input>
-                        </input>
-                      </div>
+                    <div className="lg:min-w-[500px] mx-auto space-y-6">
+                        <div
+                            className={`rounded-lg ${
+                                theme === "dark"
+                                    ? "bg-dark-bg text-light-text"
+                                    : "bg-light-bg text-dark-text"
+                            } flex space-x-4 items-center px-4 shadow-sm`}
+                        >
+                            <input
+                                className={`w-full border-none p-4 outline-none bg-transparent text-lg placeholder:${
+                                    theme === "dark"
+                                        ? " text-light-text"
+                                        : " text-dark-text"
+                                }`}
+                                placeholder={"Write a comment..."}
+                                spellCheck={false}
+                                autoComplete={"off"}
+                            ></input>
+                            <div className="flex cursor-pointer">
+                                <SendHorizonal
+                                    size={30}
+                                    color={
+                                        theme === "dark" ? "#d1d5db" : "#1f2937"
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div className={`flex flex-col space-y-10 ${
+                                theme === "dark"
+                                    ? " text-light-text"
+                                    : " text-dark-text"
+                            } p-2`}>
+                            {comments.map((comment,index) => {
+                                return (
+                                    <Comment comment={comment} key={index} />
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </DrawerContent>
