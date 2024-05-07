@@ -1,4 +1,5 @@
 "use client";
+import { useAppSelector } from "@/lib/redux/hooks";
 import { Menu, X } from "lucide-react";
 import { React, useState } from "react";
 
@@ -11,6 +12,11 @@ const Navbar = () => {
             .classList.toggle("-translate-x-full");
         setIsMenuOpen(!isMenuOpen);
     };
+    const user = useAppSelector((state) => state.user);
+
+    if(!user.isLogged){
+        return null;
+    }
 
     return (
         <div className="pb-8 md:hidden">

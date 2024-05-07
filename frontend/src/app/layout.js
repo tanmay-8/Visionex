@@ -1,9 +1,10 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import StoreProvider from "./StoreProvider";
+import StoreProvider from "../components/HOC/StoreProvider";
 import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/HOC/ThemeProvider";
 import Navbar from "@/components/Navbar";
+import ApolloAppProvider from "@/components/HOC/ApolloAppProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,19 +16,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <StoreProvider>
-                <body className="">
-                    <ThemeProvider>
-                        <div className="flex w-full min-h-screen bg-light-bg dark:bg-dark-bg font-main text-gray-800 dark:text-gray-300">
-                            <Sidebar />
-                            <div className="md:ml-40 xl:ml-60 w-full lg:w-10/12 xl:w-9/12 p-6 sm:p-12 h-full">
-                                <Navbar />
-                                {children}
+            <ApolloAppProvider>
+                <StoreProvider>
+                    <body className="">
+                        <ThemeProvider>
+                            <div className="flex w-full min-h-screen bg-light-bg dark:bg-dark-bg font-main text-gray-800 dark:text-gray-300">
+                                <Sidebar />
+                                <div className="md:ml-40 xl:ml-60 w-full lg:w-10/12 xl:w-9/12 p-6 sm:p-12 h-full">
+                                    <Navbar />
+                                    {children}
+                                </div>
                             </div>
-                        </div>
-                    </ThemeProvider>
-                </body>
-            </StoreProvider>
+                        </ThemeProvider>
+                    </body>
+                </StoreProvider>
+            </ApolloAppProvider>
         </html>
     );
 }

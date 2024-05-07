@@ -12,7 +12,7 @@ require("dotenv").config();
 class UserService {
     async createUser(input) {
         try {
-            const { name, email, password, profileImageUrl } = input;
+            const { name, email, password, profileImageUrl,username ,birthDate} = input;
             if (
                 !isValidEmail(email) ||
                 !isValidName(name) ||
@@ -32,6 +32,8 @@ class UserService {
                     email,
                     password: hashedpassword,
                     profileImageUrl,
+                    username,
+                    birthDate:new Date(birthDate)
                 },
             });
             return { user: user, success: true };
@@ -94,6 +96,7 @@ class UserService {
             if (!user) {
                 return { success: false, error: "User not found" };
             }
+            user.birthDate = user.birthDate.toISOString();
             return { user: user, success: true };
         } catch (err) {
             console.log(err);

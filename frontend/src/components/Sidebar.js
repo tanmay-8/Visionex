@@ -14,12 +14,22 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import GetIconColor from "@/lib/utils/GetIconColor";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { logout } from "@/lib/redux/features/userSlice";
 
 const Sidebar = () => {
     const router = useRouter();
     const pathname = usePathname();
+    const user = useAppSelector((state)=>state.user);
+    const dispatch = useAppDispatch();
+    console.log(user)
 
     const [iconColor, setIconColor] = useState("");
+    const handleLogout = () => {
+        localStorage.removeItem("visionToken")
+        router.push("/login")
+        dispatch(logout())
+    }
 
     useEffect(() => {
         setIconColor(GetIconColor());
@@ -86,6 +96,10 @@ const Sidebar = () => {
     const goTo = (to) => {
         router.push(to);
     };
+
+    if(!user.isLogged){
+        return null;
+    }
     return (
         <div
             id="sidebar"
@@ -113,7 +127,7 @@ const Sidebar = () => {
                     })}
                 </div>
                 <div>
-                    <button className="p-4 border-[1px] border-white rounded-2xl">
+                    <button className="p-4 border-[1px] border-white rounded-2xl" onClick={handleLogout}>
                         <LogOut size={20} color="white" />
                     </button>
                 </div>

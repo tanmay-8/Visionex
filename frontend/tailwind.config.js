@@ -6,7 +6,7 @@ module.exports = {
         "./components/**/*.{js,jsx}",
         "./app/**/*.{js,jsx}",
         "./src/**/*.{js,jsx}",
-        "./src/**/**/*.{js,jsx}"
+        "./src/**/**/*.{js,jsx}",
     ],
     prefix: "",
     theme: {
@@ -17,8 +17,8 @@ module.exports = {
                 "2xl": "1400px",
             },
         },
-        fontFamily:{
-            "main":["Roboto","sans-serif"],
+        fontFamily: {
+            main: ["Roboto", "sans-serif"],
         },
         extend: {
             colors: {
@@ -26,8 +26,8 @@ module.exports = {
                 "dark-bg": "#191c24",
                 "light-bg-sec": "#ffffff",
                 "dark-bg-sec": "#22252f",
-                "dark-text":"#1f2937",
-                "light-text":"#d1d5db",
+                "dark-text": "#1f2937",
+                "light-text": "#d1d5db",
                 main: "#419197",
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -76,10 +76,15 @@ module.exports = {
                     from: { height: "var(--radix-accordion-content-height)" },
                     to: { height: "0" },
                 },
+                "caret-blink": {
+                    "0%,70%,100%": { opacity: "1" },
+                    "20%,50%": { opacity: "0" },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                "caret-blink": "caret-blink 1.25s ease-out infinite",
             },
         },
     },

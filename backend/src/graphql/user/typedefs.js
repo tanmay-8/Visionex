@@ -3,7 +3,9 @@ const typeDefs = `#graphql
         id: ID!
         name: String!
         email: String!
+        username: String!
         profileImageUrl: String
+        birthDate: String!
         createdAt: String!
         updatedAt: String!
     }
