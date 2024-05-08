@@ -16,6 +16,14 @@ const queries = {
 
 const mutations = {
     createUser: async (_, { name, email, password, profileImageUrl,username,birthDate }) => {
+        console.log(
+            name,
+            email,
+            password,
+            profileImageUrl,
+            username,
+            birthDate
+        )
         const res = await userService.createUser({
             name,
             email,

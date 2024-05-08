@@ -12,6 +12,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/api/idea",require("./src/routes/idea"))
+app.use("/api/auth",require("./src/routes/auth"))
+
 const startServer = async () => {
     try {
         app.use(

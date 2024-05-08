@@ -1,11 +1,9 @@
 'use client';
 import { createSlice } from "@reduxjs/toolkit";
-import { userAgent } from "next/server";
 
 const initialState = {
     curStep: 0,
     isVerified: false,
-    isWithGoogle: false,
     email:"",
     password:"",
     name:"",

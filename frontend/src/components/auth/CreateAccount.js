@@ -3,10 +3,11 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { setStep, setEmail, setPassword } from "@/lib/redux/features/authSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import MyAlert from "./MyAlert";
 
 const CreateAccount = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setCurEmail] = useState("");
+    const [password, setCurPassword] = useState("");
     const [err, setErr] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -16,16 +17,42 @@ const CreateAccount = () => {
     const toLogin = () => {
         router.push("/auth/login");
     };
-    const onRegister = () => {
+    const onRegister = async (e) => {
+        e.preventDefault();
+        setLoading(true);
         try {
             if (email === "" || password === "") {
                 setErr("Please fill all the fields");
                 return;
             }
-            dispatch(setEmail(email));
-            dispatch(setPassword(password));
-            dispatch(setStep(1));
-        } catch (e) {}
+            const res = await fetch(
+                process.env.NEXT_PUBLIC_API_URL + "/api/auth/sendOtp",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email }),
+                }
+            );
+
+            const data = await res.json();
+            if (!data.success) {
+                setErr(data.error);
+                setLoading(false);
+                return;
+            } else {
+                setErr("");
+
+                dispatch(setEmail(email));
+                dispatch(setPassword(password));
+                dispatch(setStep(1));
+            }
+        } catch (e) {
+            setErr("Something went wrong !");
+            console.log(e);
+        }
+        setLoading(false);
     };
     return (
         <div className="w-full md:w-1/2 max-w-[700px] px-2 md:px-10 py-10 md:py-20 rounded-3xl">
@@ -36,66 +63,67 @@ const CreateAccount = () => {
                 Start your journey with us today !
             </p>
             <div className="mt-8">
-                <div className="flex flex-col">
-                    <label className="text-lg font-medium">Email</label>
-                    <input
-                        className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent outline-none"
-                        placeholder="Enter your email"
-                        id="email"
-                        name="email"
-                        type="email"
-                        required={true}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div className="flex flex-col mt-4">
-                    <label className="text-lg font-medium">Password</label>
-                    <input
-                        className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent outline-none"
-                        placeholder="Enter your password"
-                        type={"password"}
-                        id="password"
-                        name="password"
-                        required={true}
-                        value={password}
-                        minLength={8}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-
-                {err && (
-                    <div className="pt-6 w-full text-center text-base text-red-500">
-                        {err}
-                    </div>
-                )}
-                <div className="mt-6 flex flex-col gap-y-4">
-                    <button
-                        className="active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4 bg-main rounded-xl text-white font-bold text-lg"
-                        onClick={onRegister}
-                    >
-                        Sign Up
-                    </button>
-
-                    {loading && (
-                        <MyAlert
-                            title={"Wait"}
-                            description={"Logging you in.."}
-                            type={"Loading"}
+                <form onSubmit={onRegister}>
+                    <div className="flex flex-col">
+                        <label className="text-lg font-medium">Email</label>
+                        <input
+                            className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent outline-none"
+                            placeholder="Enter your email"
+                            id="email"
+                            name="email"
+                            type="email"
+                            required={true}
+                            value={email}
+                            onChange={(e) => setCurEmail(e.target.value)}
                         />
+                    </div>
+                    <div className="flex flex-col mt-4">
+                        <label className="text-lg font-medium">Password</label>
+                        <input
+                            className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent outline-none"
+                            placeholder="Enter your password"
+                            type={"password"}
+                            id="password"
+                            name="password"
+                            required={true}
+                            value={password}
+                            minLength={8}
+                            onChange={(e) => setCurPassword(e.target.value)}
+                        />
+                    </div>
+
+                    {err && (
+                        <div className="pt-6 w-full text-center text-base text-red-500">
+                            {err}
+                        </div>
                     )}
-                </div>
-                <div className="mt-8 flex justify-center items-center">
-                    <p className="font-medium text-base">
-                        Already have an account?
-                    </p>
-                    <button
-                        onClick={toLogin}
-                        className="ml-2 font-medium text-base text-main"
-                    >
-                        Login
-                    </button>
-                </div>
+                    <div className="mt-6 flex flex-col gap-y-4">
+                        <input
+                            className="active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4 bg-main rounded-xl text-white font-bold text-lg"
+                            type="submit"
+                            value={"Sign Up"}
+                        ></input>
+
+                        {loading && (
+                            <MyAlert
+                                title={"Wait"}
+                                description={"Signing you up.."}
+                                type={"Loading"}
+                            />
+                        )}
+                    </div>
+                    <div className="mt-8 flex justify-center items-center">
+                        <p className="font-medium text-base">
+                            Already have an account?
+                        </p>
+                        <button
+                            onClick={toLogin}
+                            className="ml-2 font-medium text-base text-main"
+                        >
+                            Login
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );

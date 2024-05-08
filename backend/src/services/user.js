@@ -23,6 +23,31 @@ class UserService {
                     success: false,
                 };
             }
+            let alUser = await prismaClient.user.findFirst({
+                where: {
+                    email: email,
+                },
+            });
+            
+            if (alUser) {
+                return {
+                    error: "Email already exists",
+                    success: false,
+                };
+            }
+
+            alUser = await prismaClient.user.findFirst({
+                where: {
+                    username: username,
+                },
+            });
+
+            if (alUser) {
+                return {
+                    error: "Username already exists",
+                    success: false,
+                };
+            }
             const salt = await bcryptjs.genSalt(10);
             const hashedpassword = await bcryptjs.hash(password, salt);
 

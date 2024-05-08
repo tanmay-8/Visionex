@@ -8,6 +8,7 @@ import { useAppSelector } from "@/lib/redux/hooks";
 
 const Signup = () => {
     const step = useAppSelector((state) => state.auth.curStep);
+    // const step = 2;
 
     return (
         <div className="absolute top-0 left-0 w-full md:p-12 p-6 flex justify-center items-center bg-light-bg dark:bg-dark-bg min-h-full">
