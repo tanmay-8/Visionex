@@ -93,9 +93,9 @@ const LoginForm = () => {
                         </button>
                     </div>
                     {err && (
-                        <div className="py-3 w-full text-center text-base text-red-500">{err}</div>
+                        <div className="pt-6 w-full text-center text-base text-red-500">{err}</div>
                     )}
-                    <div className="mt-8 flex flex-col gap-y-4">
+                    <div className="mt-6 flex flex-col gap-y-4">
                         {loading && (
                             <MyAlert
                                 title={"Wait"}

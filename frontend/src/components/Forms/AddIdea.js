@@ -2,11 +2,11 @@ import GetIconColor from "@/lib/utils/GetIconColor";
 import React from "react";
 import { useState, useEffect } from "react";
 import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { ChevronRight, CameraIcon, VideoIcon, Plus } from "lucide-react";
 import UserBanner from "../ui/UserBanner";
 import PhotoUpload from "./PhotoUpload";
 import VideoUpload from "./VideoUpload";
+import AddIdeaDetails from "./AddIdeaDetails";
 
 const AddIdea = () => {
     const [iconColor, setIconColor] = useState("#374151");
@@ -40,10 +40,7 @@ const AddIdea = () => {
                     </div> */}
                 </div>
                 <div>
-                    <Button className="bg-main hover:scale-110 transition-all text-base  items-center text-white">
-                        Share
-                        <ChevronRight className="ml-1 h-5 w-5" color="white" />
-                    </Button>
+                    <AddIdeaDetails />
                 </div>
             </div>
         </div>

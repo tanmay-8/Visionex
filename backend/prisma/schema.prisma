@@ -33,22 +33,25 @@ model Idea{
   id String @id @default(cuid())
   title String
   description String
-  teamDetails String? @map("team_details")
+  visit String?
+  collaborators String[]
   ownerId String @map("owner_id")
   owner User @relation(fields: [ownerId], references: [id])
   images Image[]
   videos Video[]
   views Int @default(0)
-  likes Int @default(0)
+  upvotes Int @default(0)
   comments Comment[]
-  category String
+  category String[]
   tags String[]
-  isFundable Boolean @default(false)
-  valuation Int @default(0)
-  fundGoal Int @default(0)
   externalLinks Json[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  email String?
+  phone String?
+  linkedin String?
+  twitter String?
+  instagram String?
   @@map("ideas")
 }
 

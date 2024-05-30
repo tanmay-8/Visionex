@@ -1,6 +1,6 @@
 "use client";
 
-import AddIdea from "@/components/Home/AddIdea";
+import AddIdea from "@/components/Forms/AddIdea"
 import Post from "@/components/posts/Post";
 import Posts from "@/components/posts/Posts";
 import { useAppDispatch } from "@/lib/redux/hooks";

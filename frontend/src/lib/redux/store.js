@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { themeReducer } from './features/themeSlice'
 import { userReducer } from './features/userSlice'
 import { authReducer } from './features/authSlice'
+import {addIdeaReducer} from "./features/addIdeaSlice"
 
 export const makeStore = () => {
   // console.log(themeReducer)
@@ -9,7 +10,8 @@ export const makeStore = () => {
     reducer: {
       theme:themeReducer,
       user:userReducer,
-      auth:authReducer
+      auth:authReducer,
+      addIdea:addIdeaReducer
     },
   })
 }
