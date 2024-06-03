@@ -7,22 +7,25 @@ import {
     DialogTrigger,
 } from "../ui/dialog";
 import { VideoIcon } from "lucide-react";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setVideos } from "@/lib/redux/features/addIdeaSlice";
 
 const VideoUpload = ({ iconColor }) => {
     const theme = useAppSelector((state) => state.theme.theme);
 
+    const videos = useAppSelector((state) => state.addIdea.videos);
+    const dispatch = useAppDispatch();
     const [files, setFiles] = useState([]);
 
     const handleDrop = (e) => {
         e.preventDefault();
         const fileList = [...e.dataTransfer.files];
-        setFiles(fileList);
+        dispatch(setVideos(fileList));
     };
 
     const handleSelectFiles = (e) => {
         const fileList = [...e.target.files];
-        setFiles(fileList);
+        dispatch(setVideos(fileList));
     };
     return (
         <Dialog className="border-none font-main ">
@@ -56,12 +59,11 @@ const VideoUpload = ({ iconColor }) => {
                             className="hidden"
                             onChange={handleSelectFiles}
                             accept="video/*"
-                            multiple
                         />
-                        {files.length > 0 && (
+                        {videos.length > 0 && (
                             <div className="max-w-[330px] text-center">
                                 <ul>
-                                    {files.map((file, index) => (
+                                    {videos.map((file, index) => (
                                         <li key={index} className="">
                                             {file.name}
                                         </li>

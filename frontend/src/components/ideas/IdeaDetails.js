@@ -12,10 +12,10 @@ import { X } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
-import PostImg from "@/assets/temp/post.jpg";
+import IdeaImg from "@/assets/temp/post.jpg";
 import Comment from "./Comment";
 
-const PostDetails = () => {
+const IdeaDetails = () => {
     const theme = useAppSelector((state) => state.theme.theme);
     const [iconColor, setIconColor] = useState();
     useEffect(() => {
@@ -116,7 +116,7 @@ const PostDetails = () => {
                             </h1>
                             <div>
                                 <Image
-                                    src={PostImg}
+                                    src={IdeaImg}
                                     height={500}
                                     className="rounded-xl mx-auto lg:m-0"
                                     alt="SmartHome Assistant - Revolutionizing Your Home Experience"
@@ -176,4 +176,4 @@ const PostDetails = () => {
     );
 };
 
-export default PostDetails;
+export default IdeaDetails;

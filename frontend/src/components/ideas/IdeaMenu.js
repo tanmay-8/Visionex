@@ -11,7 +11,7 @@ import {
 import { Bookmark, EllipsisVertical, EyeOff, Link2, Menu, ShieldAlert } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 
-const PostMenu = () => {
+const IdeaMenu = () => {
     const [iconColor, setIconColor] = useState("#374151");
 
     useEffect(() => {
@@ -65,4 +65,4 @@ const PostMenu = () => {
     );
 };
 
-export default PostMenu;
+export default IdeaMenu;

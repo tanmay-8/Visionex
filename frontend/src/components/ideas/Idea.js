@@ -1,13 +1,13 @@
 import React from "react";
-import PostMenu from "./PostMenu";
+import IdeaMenu from "./IdeaMenu";
 import UserBanner from "../ui/UserBanner";
 import Image from "next/image";
-import PostImg from "@/assets/temp/post.jpg";
+import IdeaImg from "@/assets/temp/post.jpg";
 import { Heart, MessageSquare, MoreHorizontalIcon, Share } from "lucide-react";
-import PostDetails from "./PostDetails"
+import IdeaDetails from "./IdeaDetails"
 import Comments from "./Comments";
 
-const Post = () => {
+const Idea = () => {
     return (
         <div className="flex flex-col p-4 md:p-6 space-y-3 min-h-72 bg-light-bg-sec dark:bg-dark-bg-sec rounded-xl shadow-sm">
             <div className="flex justify-between items-center">
@@ -19,14 +19,14 @@ const Post = () => {
                     </div>
                 </div>
                 <div>
-                    <PostMenu />
+                    <IdeaMenu />
                 </div>
             </div>
             <div>
                 <div className="p-4">
                     <Image
                         className="rounded-lg"
-                        src={PostImg}
+                        src={IdeaImg}
                         alt="post"
                     ></Image>
                 </div>
@@ -44,7 +44,7 @@ const Post = () => {
                         palm of your hand.
                     </p>
                     <span className="text-main py-1 cursor-pointer">
-                        <PostDetails />
+                        <IdeaDetails />
                     </span>
                 </div>
                 <div className="flex justify-between pt-6 px-4">
@@ -74,4 +74,4 @@ const Post = () => {
     );
 };
 
-export default Post;
+export default Idea;

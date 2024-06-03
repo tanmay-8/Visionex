@@ -1,8 +1,8 @@
 "use client";
 
-import AddIdea from "@/components/Forms/AddIdea"
-import Post from "@/components/posts/Post";
-import Posts from "@/components/posts/Posts";
+import AddIdea from "@/components/AddIdea/AddIdea";
+import Idea from "@/components/ideas/Idea";
+import Ideas from "@/components/ideas/Ideas";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect ,useState} from "react";
@@ -24,7 +24,7 @@ const Home = () => {
     return (
         <div className="w-full h-full space-y-10 ">
             <AddIdea />
-            <Posts />
+            <Ideas />
         </div>
     );
 };

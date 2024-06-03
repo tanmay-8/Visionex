@@ -34,6 +34,7 @@ const LoginForm = () => {
             });
             if (data.login.error) {
                 setErr(data.login.error);
+                setLoading(false);
                 return;
             }
             setTimeout(() => {}, [3000]);
@@ -93,7 +94,9 @@ const LoginForm = () => {
                         </button>
                     </div>
                     {err && (
-                        <div className="pt-6 w-full text-center text-base text-red-500">{err}</div>
+                        <div className="pt-6 w-full text-center text-base text-red-500">
+                            {err}
+                        </div>
                     )}
                     <div className="mt-6 flex flex-col gap-y-4">
                         {loading && (

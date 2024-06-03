@@ -44,7 +44,6 @@ model Idea{
   comments Comment[]
   category String[]
   tags String[]
-  externalLinks Json[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email String?

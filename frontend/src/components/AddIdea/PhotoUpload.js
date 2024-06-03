@@ -2,21 +2,23 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { CameraIcon } from "lucide-react";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setImages } from "@/lib/redux/features/addIdeaSlice";
 
 const PhotoUpload = ({ iconColor }) => {
     const theme = useAppSelector((state) => state.theme.theme);
-    const [files, setFiles] = useState([]);
+    const images = useAppSelector((state) => state.addIdea.images);
+    const dispatch = useAppDispatch();
 
     const handleDrop = (e) => {
         e.preventDefault();
         const fileList = [...e.dataTransfer.files];
-        setFiles(fileList);
+        dispatch(setImages(fileList));
     };
 
     const handleSelectFiles = (e) => {
         const fileList = [...e.target.files];
-        setFiles(fileList);
+        dispatch(setImages(fileList));
     };
     return (
         <Dialog className="border-none font-main ">
@@ -52,10 +54,10 @@ const PhotoUpload = ({ iconColor }) => {
                             onChange={handleSelectFiles}
                             multiple
                         />
-                        {files.length > 0 && (
+                        {images.length > 0 && (
                             <div className="max-w-[320px] text-center">
                                 <ul>
-                                    {files.map((file, index) => (
+                                    {images.map((file, index) => (
                                         <li key={index} className="">
                                             {file.name}
                                         </li>
