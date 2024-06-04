@@ -20,7 +20,7 @@ const Signup = () => {
                 ) : (
                     <BasicInfo />
                 )}
-                <div className="w-full md:w-1/2 h-full flex items-center justify-center p-8 rounded-xl bg-blue-700"></div>
+                <div className="w-full md:w-1/2 h-full flex items-center justify-center p-8 rounded-xl "></div>
             </div>
         </div>
     );

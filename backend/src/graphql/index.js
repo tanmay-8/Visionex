@@ -1,12 +1,18 @@
 const { ApolloServer } = require("@apollo/server");
 const User = require("./user/index");
 const Idea = require("./idea/index");
+const Image = require("./image/index");
+const Video = require("./video/index");
+const Comment = require("./comment/index");
 
 const createGraphqlServer = async () => {
     const server = new ApolloServer({
         typeDefs: `
             ${User.typeDefs}
             ${Idea.typeDefs}
+            ${Image.typeDefs}
+            ${Video.typeDefs}
+            ${Comment.typeDefs}
             type Query {
                 ${User.queries}
                 ${Idea.queries}
