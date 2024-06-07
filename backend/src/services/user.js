@@ -5,7 +5,7 @@ const {
     isValidEmail,
     isValidName,
     isValidPassword,
-} = require("../utils/userValidators");
+} = require("../validators/userValidators");
 
 require("dotenv").config();
 

@@ -28,9 +28,6 @@ const typeDefs = `#graphql
         description:String!
         visit:String
         collaborators:[String]
-        ownerId:ID!
-        images:[ImageInput]
-        videos:[VideoInput]
         category:String!
         tags:[String]
         email:String
@@ -39,6 +36,13 @@ const typeDefs = `#graphql
         twitter:String
         instagram:String
     }
+
+    type CreateIdeaResponse{
+        idea:Idea
+        success:Boolean
+        error:String
+    }
+   
 `;
 
 module.exports = { typeDefs };

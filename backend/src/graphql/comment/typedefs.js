@@ -3,9 +3,7 @@ const typeDefs = `#graphql
         id:ID!
         text:String!
         ideaId:ID!
-        idea:Idea!
         userId:ID!
-        user:User!
         createdAt:String!
         updatedAt:String!
     }
