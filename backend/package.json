@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.4",
+    "@aws-sdk/client-s3": "^3.592.0",
+    "@aws-sdk/s3-request-presigner": "^3.592.0",
     "@prisma/client": "^5.12.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -19,6 +21,7 @@
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.13",
     "prisma": "^5.12.1"
   }
