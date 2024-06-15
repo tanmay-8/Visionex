@@ -15,6 +15,12 @@ const typeDefs = `#graphql
         name:String!
         ideaId:ID!
     }
+
+    type getUrlResponse{
+        url:String!
+        success:Boolean!
+        error:String
+    }
 `;
 
 module.exports = { typeDefs };

@@ -11,7 +11,8 @@ const PORT = Number(process.env.PORT) || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use("/api/idea",require("./src/routes/idea"))
+app.use("/api/video",require("./src/routes/video"))
+app.use("/api/image",require("./src/routes/image"))
 app.use("/api/auth",require("./src/routes/auth"))
 
 const startServer = async () => {

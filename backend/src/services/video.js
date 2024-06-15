@@ -1,11 +1,11 @@
 const { uploadFile, makeUndeletable, makeDeletable,getObjectSignedUrl } = require("../lib/s3");
 
-class ImageService {
-    async uploadImage(fileBuffer, fileName, mimetype) {
+class VideoService {
+    async uploadVideo(fileBuffer, fileName, mimetype) {
         try {
-            const result = await uploadFile(fileBuffer,"PostImages/"+fileName, mimetype);
+            const result = await uploadFile(fileBuffer,"PostVideos/"+fileName, mimetype);
             if (result.$metadata.httpStatusCode === 200) {
-                console.log("uploadImage service ", fileName);
+                console.log("uploadVideo service ", fileName);
                 return { success: true };
             } else {
                 return { error: "Error uploading file", success: false };
@@ -18,7 +18,7 @@ class ImageService {
 
     async makeUndeletable(key) {
         try {
-            key = "PostImages/"+key;
+            key = "PostVideos/"+key;
             const result = await makeUndeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -33,7 +33,7 @@ class ImageService {
 
     async makeDeletable(key) {
         try {
-            key = "PostImages/"+key;
+            key = "PostVideos/"+key;
             const result = await makeDeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -47,7 +47,7 @@ class ImageService {
     }
     async getSignedUrl(key) {
         try {
-            key = "PostImages/"+key;
+            key = "PostVideos/"+key;
             const url = await getObjectSignedUrl(key);
             return { success: true, url };
         } catch (err) {
@@ -57,4 +57,4 @@ class ImageService {
     }
 }
 
-module.exports = { imageService: new ImageService() };
+module.exports = { videoService: new VideoService() };

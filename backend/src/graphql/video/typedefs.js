@@ -15,6 +15,9 @@ const typeDefs = `#graphql
         name:String!
         ideaId:ID!
     }
+
+  
+
 `;
 
 module.exports = { typeDefs };

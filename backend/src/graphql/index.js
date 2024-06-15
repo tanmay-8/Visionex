@@ -16,10 +16,15 @@ const createGraphqlServer = async () => {
             type Query {
                 ${User.queries}
                 ${Idea.queries}
+                ${Image.queries}
+                ${Video.queries}
             }
             type Mutation {
                 ${User.mutations}
                 ${Idea.mutations}
+                ${Image.mutations}
+                ${Video.mutations}
+
             }
             `,
 
@@ -27,10 +32,14 @@ const createGraphqlServer = async () => {
             Query: {
                 ...User.resolvers.queries,
                 ...Idea.resolvers.queries,
+                ...Image.resolvers.queries,
+                ...Video.resolvers.queries,
             },
             Mutation: {
                 ...User.resolvers.mutations,
                 ...Idea.resolvers.mutations,
+                ...Image.resolvers.mutations,
+                ...Video.resolvers.mutations,
             },
         },
     });

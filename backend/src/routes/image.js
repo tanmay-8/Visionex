@@ -7,6 +7,7 @@ const { imageService } = require("../services/image");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
 router.post("/uploadImage", upload.single("photo"), async (req, res) => {
     try {
         const file = req.file;
@@ -46,15 +47,6 @@ router.post("/makeDeletable", async (req, res) => {
         const { name } = req.body;
         const result = await imageService.makeDeletable(name);
         res.json(result);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false });
-    }
-});
-router.post("/uploadVideo", async (req, res) => {
-    try {
-        console.log(req.body);
-        res.json({ success: true });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false });
