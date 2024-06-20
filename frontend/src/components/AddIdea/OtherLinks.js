@@ -1,7 +1,13 @@
 import React from "react";
 import { Mail, Phone, Linkedin, Twitter, Instagram } from "lucide-react";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { Label } from "../ui/label";
+import {
+    setEmail,
+    setInstagram,
+    setLinkedin,
+    setTwitter,
+} from "@/lib/redux/features/addIdeaSlice";
 
 const OtherLinks = () => {
     const theme = useAppSelector((state) => state.theme.theme);
@@ -11,6 +17,8 @@ const OtherLinks = () => {
             ? "bg-light-bg-sec text-dark-text"
             : "bg-dark-bg-sec text-light-text"
     } w-full bg-none outline-none border-none py-2`;
+
+    const dispatch = useAppDispatch();
 
     return (
         <div
@@ -29,6 +37,9 @@ const OtherLinks = () => {
                         className={inputClass}
                         placeholder="Email"
                         type="email"
+                        onChange={(e) => {
+                            dispatch(setEmail(e.target.value));
+                        }}
                     />
                 </div>
                 <div className="relative flex border rounded-lg p-2 items-center  w-full">
@@ -39,6 +50,9 @@ const OtherLinks = () => {
                         className={inputClass}
                         placeholder="LinkedIn"
                         type="url"
+                        onChange={(e) => {
+                            dispatch(setLinkedin(e.target.value));
+                        }}
                     />
                 </div>
             </div>
@@ -51,6 +65,9 @@ const OtherLinks = () => {
                         className={inputClass}
                         placeholder="Twitter"
                         type="url"
+                        onChange={(e) => {
+                            dispatch(setTwitter(e.target.value));
+                        }}
                     />
                 </div>
                 <div className="relative flex border rounded-lg p-2 items-center w-full">
@@ -61,6 +78,9 @@ const OtherLinks = () => {
                         className={inputClass}
                         placeholder="Instagram"
                         type="url"
+                        onChange={(e) => {
+                            dispatch(setInstagram(e.target.value));
+                        }}
                     />
                 </div>
             </div>

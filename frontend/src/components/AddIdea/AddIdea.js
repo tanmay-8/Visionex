@@ -7,6 +7,8 @@ import UserBanner from "../ui/UserBanner";
 import PhotoUpload from "./PhotoUpload";
 import VideoUpload from "./VideoUpload";
 import AddIdeaDetails from "./AddIdeaDetails";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setDescription } from "@/lib/redux/features/addIdeaSlice";
 
 const AddIdea = () => {
     const [iconColor, setIconColor] = useState("#374151");
@@ -14,6 +16,9 @@ const AddIdea = () => {
     useEffect(() => {
         setIconColor(GetIconColor());
     }, [iconColor]);
+
+    const dispatch = useAppDispatch();
+    const desc = useAppSelector((state) => state.addIdea.description);
 
     return (
         <div className="bg-light-bg-sec dark:bg-dark-bg-sec space-y-6 rounded-xl shadow-sm p-4 md:p-8">
@@ -27,6 +32,10 @@ const AddIdea = () => {
                         placeholder={"Share your vision..."}
                         spellCheck={false}
                         className="text-gray-800 dark:text-gray-300 dark:border-gray-300 text-lg rounded-lg"
+                        value={desc}
+                        onChange={(e) => {
+                            dispatch(setDescription(e.target.value));
+                        }}
                     />
                 </div>
             </div>

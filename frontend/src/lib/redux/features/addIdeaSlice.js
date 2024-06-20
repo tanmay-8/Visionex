@@ -42,7 +42,7 @@ const addIdeaSlice = createSlice({
         setVideos: (state, action) => {
             state.videos = action.payload;
         },
-        setCollborators: (state, action) => {
+        setCollaborators: (state, action) => {
             state.collaborators = action.payload;
         },
         setVisit: (state, action) => {
@@ -74,7 +74,7 @@ export const {
     setExternalLinks,
     setImages,
     setVideos,
-    setCollborators,
+    setCollaborators,
     setVisit,
     setEmail,
     setPhone,

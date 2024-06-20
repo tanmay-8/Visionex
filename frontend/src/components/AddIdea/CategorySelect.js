@@ -6,13 +6,24 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { setCategory } from "@/lib/redux/features/addIdeaSlice";
 
 const CategorySelect = () => {
+    const dispatch = useAppDispatch();
     return (
         <div>
-            <Select className="text-lg bg-none">
+            <Select
+                className="text-lg bg-none"
+                onValueChange={(e) => {
+                    dispatch(setCategory(e));
+                }}
+            >
                 <SelectTrigger className="w-full bg-none">
-                    <SelectValue placeholder="Category" className="text-lg bg-none"/>
+                    <SelectValue
+                        placeholder="Category"
+                        className="text-lg bg-none"
+                    />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="light">Light</SelectItem>

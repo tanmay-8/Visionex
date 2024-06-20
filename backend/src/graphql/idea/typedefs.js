@@ -7,9 +7,9 @@ const typeDefs = `#graphql
         collaborators:[String]
         ownerId:ID!
         owner:User!
-        images:[Image]
-        videos:[Video]
-        comments:[Comment]
+        images:[Image!]
+        videos:[Video!]
+        comments:[Comment!]
         category:String!
         tags:[String]
         views:Int!
@@ -27,9 +27,9 @@ const typeDefs = `#graphql
         title:String!
         description:String!
         visit:String
-        collaborators:[String]
+        collaborators:[String!]
         category:String!
-        tags:[String]
+        tags:[String!]
         email:String
         phone:String
         linkedin:String

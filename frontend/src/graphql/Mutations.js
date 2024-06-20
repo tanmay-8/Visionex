@@ -40,3 +40,39 @@ export const REGISTER_USER = gql`
         }
     }
 `;
+
+export const CREATE_IDEA = gql`
+    mutation CreateIdea {
+        createIdea(
+            title:String!
+            description:String!
+            visit:String
+            collaborators:[String!]
+            category:String!
+            tags:[String!]
+            email:String
+            phone:String
+            linkedin:String
+            twitter:String
+            instagram:String
+
+        )(
+            ideaInput: {
+                title: $title
+                description: $description
+                visit: $visit
+                collaborators: $collaborators
+                category: $category
+                tags: $tags
+                email: $email
+                phone: $phone
+                linkedin: $linkedin
+                twitter: $twitter
+                instagram: $instagram
+            }
+        ) {
+            success
+            error
+        }
+    }
+`;

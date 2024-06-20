@@ -13,18 +13,52 @@ import AddIdeaVideos from "./AddIdeaVideos";
 import AddTags from "./AddTags";
 import AddCollaborators from "./AddCollaborators";
 import OtherLinks from "./OtherLinks";
+import { setTitle, setDescription } from "@/lib/redux/features/addIdeaSlice";
+import MyAlert from "../auth/MyAlert";
+import IdeaAlert from "./IdeaAlert";
 
 const AddIdeaDetails = () => {
-    const options = ["option1", "option2", "option3"];
-
-    const [selected, setSelected] = useState([]);
-    const onSelect = (selected) => {
-        setSelected(selected);
-    };
-
     const theme = useAppSelector((state) => state.theme.theme);
     const curIdea = useAppSelector((state) => state.addIdea);
     const dispatch = useAppDispatch();
+    const [error, setError] = useState("");
+    const isValidIdea = (idea) => {
+        if (idea.title.length < 5) {
+            return {
+                status: false,
+                message: "Title should be atleast 5 characters long",
+            };
+        }
+        if (idea.description.length < 20) {
+            return {
+                status: false,
+                message: "Description should be atleast 20 characters long",
+            };
+        }
+
+        if (idea.category.length === 0) {
+            return {
+                status: false,
+                message: "Please select a category",
+            };
+        }
+
+        return {
+            status: true,
+            message: "",
+        };
+    };
+
+    const submitIdea = (e) => {
+        e.preventDefault();
+        const isvalid = isValidIdea(curIdea);
+        if (!isvalid.status) {
+            setError(isvalid.message);
+            console.log(isvalid.message);
+            return;
+        }
+        console.log(curIdea);
+    };
 
     return (
         // <Sheet className="bg-light-bg-sec dark:bg-dark-bg-sec" open={true}>
@@ -35,6 +69,7 @@ const AddIdeaDetails = () => {
                     : "bg-dark-bg text-light-text"
             } pb-10`}
         >
+            {error !=="" && <IdeaAlert open={true}/>}
             <SheetTrigger>
                 <Button className="bg-main hover:scale-110 transition-all text-base  items-center text-white">
                     Share
@@ -61,7 +96,10 @@ const AddIdeaDetails = () => {
                         </p>
                     </div>
                     <Separator />
-                    <form className="w-full h-full  md:p-8 p-4 ">
+                    <form
+                        onSubmit={submitIdea}
+                        className="w-full h-full  md:p-8 p-4 "
+                    >
                         <div className="w-full h-full space-y-6">
                             <div className="w-full space-y-1">
                                 <Label className="text-lg">Title</Label>
@@ -72,6 +110,10 @@ const AddIdeaDetails = () => {
                                             : "bg-dark-bg-sec text-light-text"
                                     } rounded-lg outline-none text-lg`}
                                     placeholder="Title"
+                                    value={curIdea.title}
+                                    onChange={(e) => {
+                                        dispatch(setTitle(e.target.value));
+                                    }}
                                 />
                             </div>
                             <div className={`w-full space-y-1`}>
@@ -84,6 +126,12 @@ const AddIdeaDetails = () => {
                                             ? "bg-light-bg-sec text-dark-text"
                                             : "bg-dark-bg-sec text-light-text"
                                     }`}
+                                    value={curIdea.description}
+                                    onChange={(e) => {
+                                        dispatch(
+                                            setDescription(e.target.value)
+                                        );
+                                    }}
                                 />
                             </div>
                             <div className="space-y-1">
@@ -132,9 +180,7 @@ const AddIdeaDetails = () => {
                             <div className="flex p-2 space-x-6">
                                 <button
                                     className={`${
-                                        theme === "light"
-                                            ? ""
-                                            : ""
+                                        theme === "light" ? "" : ""
                                     } bg-main hover:scale-110 transition-all text-lg  items-center text-white py-3 w-40 rounded-lg shadow-sm`}
                                     type="submit"
                                 >
