@@ -7,15 +7,15 @@ import { Heart, MessageSquare, MoreHorizontalIcon, Share } from "lucide-react";
 import IdeaDetails from "./IdeaDetails"
 import Comments from "./Comments";
 
-const Idea = () => {
+const Idea = ({idea}) => {
     return (
         <div className="flex flex-col p-4 md:p-6 space-y-3 min-h-72 bg-light-bg-sec dark:bg-dark-bg-sec rounded-xl shadow-sm">
             <div className="flex justify-between items-center">
                 <div className="flex space-x-3 items-center">
                     <UserBanner />
                     <div>
-                        <h1 className="text-xl font-semibold">John Doe</h1>
-                        <p>5 min ago</p>
+                        <h1 className="text-xl font-semibold">{idea.owner.name}</h1>
+                        <p>{(((Date.now())-idea.createdAt)/(1000*60)).toFixed(0)} min ago</p>
                     </div>
                 </div>
                 <div>
@@ -26,22 +26,19 @@ const Idea = () => {
                 <div className="p-4">
                     <Image
                         className="rounded-lg"
-                        src={IdeaImg}
+                        src={idea.images[0].url}
+                        width={500} height={300}
                         alt="post"
                     ></Image>
                 </div>
                 <div className="py-2 px-4">
                     <h1 className="text-xl font-semibold">
-                        SmartHome Assistant - Revolutionizing Your Home
-                        Experience
+                        {idea.title}
                     </h1>
-                    <p className="text-lg text-gray-500">
-                        Introducing SmartHome Assistant, a revolutionary
-                        AI-powered home automation system designed to simplify
-                        your life and enhance your living experience. Imagine
-                        having a personal assistant that manages your home's
-                        appliances, security, and entertainment, all from the
-                        palm of your hand.
+                    <p className="text-lg text-gray-500 text-wrap break-words">
+                        {
+                            idea.description
+                        }
                     </p>
                     <span className="text-main py-1 cursor-pointer">
                         <IdeaDetails />
@@ -55,7 +52,7 @@ const Idea = () => {
                                 className="mr-2"
                                 color="rgb(107 114 128)"
                             />
-                            <p>12</p>
+                            <p>{idea.upvotes}</p>
                         </div>
                         <div>
                             <Comments />

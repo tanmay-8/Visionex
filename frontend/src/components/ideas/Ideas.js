@@ -1,31 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Idea from "./Idea";
+import { useQuery } from "@apollo/client";
+import { GET_IDEAS } from "@/graphql/Queries";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setIdeas } from "@/lib/redux/features/ideasSlice";
 
 const Ideas = () => {
-    const posts = [
-        {
-            title: "Idea 1",
-            content: "This is the content of post 1",
-        },
-        {
-            title: "Idea 2",
-            content: "This is the content of post 2",
-        },
-        {
-            title: "Idea 3",
-            content: "This is the content of post 3",
-        },
-    ];
+    const ideas = useAppSelector((state) => state.ideas.ideas);
+    const { data: getIdeasData, loading, error } = useQuery(GET_IDEAS);
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (getIdeasData) {
+            dispatch(setIdeas(getIdeasData.getIdeas));
+            console.log(getIdeasData.getIdeas);
+            console.log(ideas);
+        }
+    }, [getIdeasData]);
     return (
         <div className="lg:flex lg:space-x-8 space-y-8 lg:space-y-0 w-full">
             <div className="space-y-8 w-full lg:w-1/2">
-                {posts.map((post, index) => {
-                    return <Idea key={index} />;
+                {ideas.map((idea, index) => {
+                    return <Idea key={index} idea={idea} />;
                 })}
             </div>
             <div className="space-y-8 w-full lg:w-1/2">
-                {posts.map((post, index) => {
-                    return <Idea key={index} />;
+                {ideas.map((idea, index) => {
+                    return <Idea key={index} idea={idea} />;
                 })}
             </div>
         </div>

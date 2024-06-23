@@ -63,7 +63,7 @@ const AddTags = () => {
                         }
                     }}
                     value={tag}
-                    onChange={(e) => setTag(e.target.value)}
+                    onChange={(e) => setTag(e.target.value.trim())}
                 />
                 <PlusIcon className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer"  onClick={addTag}/>
             </div>

@@ -38,7 +38,7 @@ const OtherLinks = () => {
                         placeholder="Email"
                         type="email"
                         onChange={(e) => {
-                            dispatch(setEmail(e.target.value));
+                            dispatch(setEmail(e.target.value.trim()));
                         }}
                     />
                 </div>
@@ -51,7 +51,7 @@ const OtherLinks = () => {
                         placeholder="LinkedIn"
                         type="url"
                         onChange={(e) => {
-                            dispatch(setLinkedin(e.target.value));
+                            dispatch(setLinkedin(e.target.value.trim()));
                         }}
                     />
                 </div>
@@ -66,7 +66,7 @@ const OtherLinks = () => {
                         placeholder="Twitter"
                         type="url"
                         onChange={(e) => {
-                            dispatch(setTwitter(e.target.value));
+                            dispatch(setTwitter(e.target.value.trim()));
                         }}
                     />
                 </div>
@@ -79,7 +79,7 @@ const OtherLinks = () => {
                         placeholder="Instagram"
                         type="url"
                         onChange={(e) => {
-                            dispatch(setInstagram(e.target.value));
+                            dispatch(setInstagram(e.target.value.trim()));
                         }}
                     />
                 </div>

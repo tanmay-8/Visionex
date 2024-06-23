@@ -10,6 +10,9 @@ import {
 const ApolloAppProvider = ({ children }) => {
     const client = new ApolloClient({
         uri: process.env.NEXT_PUBLIC_API_URL + "/graphql",
+        headers: {
+            authToken: localStorage.getItem("visionToken") || "",
+        },
         cache: new InMemoryCache(),
     });
     return <ApolloProvider client={client}>{children}</ApolloProvider>;

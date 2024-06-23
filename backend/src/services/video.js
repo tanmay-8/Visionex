@@ -1,4 +1,5 @@
 const { uploadFile, makeUndeletable, makeDeletable,getObjectSignedUrl } = require("../lib/s3");
+const { prismaClient } = require("../lib/db");
 
 class VideoService {
     async uploadVideo(fileBuffer, fileName, mimetype) {
@@ -54,6 +55,23 @@ class VideoService {
             console.log(err);
             return { error: err, success: false };
         }
+    }
+
+    async createVideo({ fileName, ownerId, ideaId }) {
+        try {
+            const video = await prismaClient.video.create({
+                data: {
+                    name:fileName,
+                    ownerId,
+                    ideaId,
+                },
+            });
+            return { video, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    
     }
 }
 

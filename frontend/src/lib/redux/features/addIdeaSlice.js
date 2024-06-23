@@ -63,6 +63,22 @@ const addIdeaSlice = createSlice({
         setInstagram: (state, action) => {
             state.instagram = action.payload;
         },
+        clearIdea: (state) => {
+            state.title = "";
+            state.description = "";
+            state.collaborators = [];
+            state.category = [];
+            state.visit = "";
+            state.tags = [];
+            state.externalLinks = [];
+            state.images = [];
+            state.videos = [];
+            state.email = "";
+            state.phone = "";
+            state.linkedin = "";
+            state.twitter = "";
+            state.instagram = "";
+        }
     },
 });
 
@@ -81,6 +97,7 @@ export const {
     setLinkedin,
     setTwitter,
     setInstagram,
+    clearIdea,
 } = addIdeaSlice.actions;
 
 export const addIdeaReducer = addIdeaSlice.reducer;

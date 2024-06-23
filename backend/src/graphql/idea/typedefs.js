@@ -27,11 +27,12 @@ const typeDefs = `#graphql
         title:String!
         description:String!
         visit:String
+        images:[String!]
+        videos:[String!]
         collaborators:[String!]
         category:String!
         tags:[String!]
         email:String
-        phone:String
         linkedin:String
         twitter:String
         instagram:String

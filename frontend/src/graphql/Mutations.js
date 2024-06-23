@@ -42,30 +42,31 @@ export const REGISTER_USER = gql`
 `;
 
 export const CREATE_IDEA = gql`
-    mutation CreateIdea {
+    mutation CreateIdea(
+        $title: String!
+        $description: String!
+        $visit: String
+        $category: String!
+        $tags: [String!]
+        $collaborators: [String!]
+        $images: [String!]
+        $videos: [String!]
+        $email: String
+        $linkedin: String
+        $twitter: String
+        $instagram: String
+    ) {
         createIdea(
-            title:String!
-            description:String!
-            visit:String
-            collaborators:[String!]
-            category:String!
-            tags:[String!]
-            email:String
-            phone:String
-            linkedin:String
-            twitter:String
-            instagram:String
-
-        )(
             ideaInput: {
                 title: $title
                 description: $description
                 visit: $visit
-                collaborators: $collaborators
                 category: $category
                 tags: $tags
+                collaborators: $collaborators
+                images: $images
+                videos: $videos
                 email: $email
-                phone: $phone
                 linkedin: $linkedin
                 twitter: $twitter
                 instagram: $instagram

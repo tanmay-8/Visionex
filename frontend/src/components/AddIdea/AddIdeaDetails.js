@@ -13,50 +13,80 @@ import AddIdeaVideos from "./AddIdeaVideos";
 import AddTags from "./AddTags";
 import AddCollaborators from "./AddCollaborators";
 import OtherLinks from "./OtherLinks";
-import { setTitle, setDescription } from "@/lib/redux/features/addIdeaSlice";
+import {
+    setTitle,
+    setDescription,
+    setVisit,
+    clearIdea,
+} from "@/lib/redux/features/addIdeaSlice";
 import MyAlert from "../auth/MyAlert";
 import IdeaAlert from "./IdeaAlert";
+import { isValidIdea } from "@/lib/utils/validators";
+import { useMutation } from "@apollo/client";
+import { CREATE_IDEA } from "@/graphql/Mutations";
 
 const AddIdeaDetails = () => {
     const theme = useAppSelector((state) => state.theme.theme);
     const curIdea = useAppSelector((state) => state.addIdea);
     const dispatch = useAppDispatch();
-    const [error, setError] = useState("");
-    const isValidIdea = (idea) => {
-        if (idea.title.length < 5) {
-            return {
-                status: false,
-                message: "Title should be atleast 5 characters long",
-            };
-        }
-        if (idea.description.length < 20) {
-            return {
-                status: false,
-                message: "Description should be atleast 20 characters long",
-            };
-        }
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState("");
+    const [type, setType] = useState("success");
+    const [isLoading,setIsLoading] = useState(false);
+    const  [createIdea,{data:createIdeaData}] = useMutation(CREATE_IDEA);
 
-        if (idea.category.length === 0) {
-            return {
-                status: false,
-                message: "Please select a category",
-            };
-        }
-
-        return {
-            status: true,
-            message: "",
-        };
+    const handleOpen = () => {
+        setOpen((s) => !s);
     };
-
-    const submitIdea = (e) => {
+    const submitIdea = async (e) => {
         e.preventDefault();
         const isvalid = isValidIdea(curIdea);
         if (!isvalid.status) {
-            setError(isvalid.message);
+            setMessage(isvalid.message);
+            setOpen(true);
+            setType("error");
             console.log(isvalid.message);
             return;
         }
+        setIsLoading(true);
+        setType("Loading")
+        setMessage("Sharing your vision with the world...");
+        setOpen(true);
+        try{
+            const res = await createIdea({variables:{
+                title:curIdea.title,
+                description:curIdea.description,
+                visit:curIdea.visit,
+                collaborators:curIdea.collaborators,
+                category:curIdea.category,
+                tags:curIdea.tags,
+                email:curIdea.email,
+                phone:curIdea.phone,
+                linkedin:curIdea.linkedin,
+                twitter:curIdea.twitter,
+                instagram:curIdea.instagram,
+                images:curIdea.images.map((image)=>image.key),
+                videos:curIdea.videos.map((video)=>video.key)
+            }});
+            console.log(res);
+            if(res.data.createIdea.success){
+                setMessage("Idea Added Successfully");
+                setOpen(true);
+                setType("success");
+                dispatch(clearIdea())
+            }else{
+                setMessage(res.data.createIdea.error);
+                setType("error");
+                setOpen(true);
+            }
+        }
+        catch(err){
+            setMessage(err.message);
+            setOpen(true);
+            setType("error");
+            console.log(err);
+        }
+        setIsLoading(false);
         console.log(curIdea);
     };
 
@@ -69,7 +99,12 @@ const AddIdeaDetails = () => {
                     : "bg-dark-bg text-light-text"
             } pb-10`}
         >
-            {error !=="" && <IdeaAlert open={true}/>}
+            <IdeaAlert
+                message={message}
+                type={type}
+                open={open}
+                handleOpen={handleOpen}
+            />
             <SheetTrigger>
                 <Button className="bg-main hover:scale-110 transition-all text-base  items-center text-white">
                     Share
@@ -171,6 +206,9 @@ const AddIdeaDetails = () => {
                                             : "bg-dark-bg-sec text-light-text"
                                     } rounded-lg outline-none text-lg`}
                                     placeholder="Link"
+                                    onChange={(e) => {
+                                        dispatch(setVisit(e.target.value));
+                                    }}
                                 />
                             </div>
                             <div className="w-full space-y-1">
