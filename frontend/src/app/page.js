@@ -5,26 +5,30 @@ import Idea from "@/components/ideas/Idea";
 import Ideas from "@/components/ideas/Ideas";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { useRouter } from "next/navigation";
-import { useEffect ,useState} from "react";
+import { useEffect, useState } from "react";
 import { login } from "@/lib/redux/features/userSlice";
 
 const Home = () => {
     const [token, setToken] = useState(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
-    useEffect(()=>{
+    useEffect(() => {
         let curToken = localStorage.getItem("visionToken");
         setToken(curToken);
-        if(curToken){
+        if (curToken) {
             dispatch(login(token));
-        }else{
+        } else {
             router.push("/auth/login");
         }
-    },[token])
+    }, [token]);
     return (
         <div className="w-full h-full space-y-10 ">
-            <AddIdea />
-            <Ideas />
+            {token && (
+                <>
+                    <AddIdea />
+                    <Ideas />
+                </>
+            )}
         </div>
     );
 };

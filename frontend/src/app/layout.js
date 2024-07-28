@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
                         <ThemeProvider>
                             <div className="flex w-full min-h-screen bg-light-bg dark:bg-dark-bg font-main text-gray-800 dark:text-gray-300">
                                 <Sidebar />
-                                <div className="md:ml-40 xl:ml-60 w-full lg:w-10/12 xl:w-9/12 p-6 sm:p-12 h-full">
+                                <div className="md:ml-40 lg:ml-[25%] w-full lg:w-8/12 xl:w-1/2  p-6 sm:p-12 h-full">
                                     <Navbar />
                                     {children}
                                 </div>

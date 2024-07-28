@@ -27,7 +27,7 @@ const Sidebar = () => {
     const [iconColor, setIconColor] = useState("");
     const handleLogout = () => {
         localStorage.removeItem("visionToken")
-        router.push("/login")
+        router.push("/auth/login")
         dispatch(logout())
     }
 
@@ -58,17 +58,17 @@ const Sidebar = () => {
             to: "/explore",
             isselected: pathname === "/explore",
         },
-        // {
-        //     label: "Inbox",
-        //     icon: (
-        //         <Mail
-        //             size={25}
-        //             color={pathname === "/inbox" ? "#374151" : "white"}
-        //         />
-        //     ),
-        //     to: "/inbox",
-        //     isselected: pathname === "/inbox",
-        // },
+        {
+            label: "Inbox",
+            icon: (
+                <Mail
+                    size={25}
+                    color={pathname === "/inbox" ? "#374151" : "white"}
+                />
+            ),
+            to: "/inbox",
+            isselected: pathname === "/inbox",
+        },
         {
             label: "Profile",
             icon: (

@@ -1,4 +1,12 @@
 const typeDefs = `#graphql
+    type Upvote{
+        id:ID!
+        userId:ID!
+        ideaId:ID!
+        user:User!  
+        createdAt:String!
+        updatedAt:String!
+    }
     type Idea{
         id:ID!
         title:String!
@@ -13,7 +21,8 @@ const typeDefs = `#graphql
         category:String!
         tags:[String]
         views:Int!
-        upvotes:Int!
+        upvotesCount:Int!
+        upvotes:[Upvote!]
         email:String
         phone:String
         linkedin:String
@@ -21,6 +30,7 @@ const typeDefs = `#graphql
         instagram:String
         createdAt:String!
         updatedAt:String!
+        isMine:Boolean!
     }
 
     input IdeaInput{

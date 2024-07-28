@@ -8,10 +8,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bookmark, EllipsisVertical, EyeOff, Link2, Menu, ShieldAlert } from "lucide-react";
+import { Bookmark, Delete, DeleteIcon, EllipsisVertical, EyeOff, Link2, Menu, ShieldAlert, Trash } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 
-const IdeaMenu = () => {
+const IdeaMenu = ({idea}) => {
     const [iconColor, setIconColor] = useState("#374151");
 
     useEffect(() => {
@@ -58,6 +58,18 @@ const IdeaMenu = () => {
                         <span className="text-lg">Report</span>
                     </DropdownMenuItem>
 
+                    {
+                        idea.isMine &&(
+                            <DropdownMenuItem>
+                                <Trash
+                                    size={25}
+                                    className="mr-2"
+                                    color="rgb(107 114 128)"
+                                />
+                                <span className="text-lg">Delete</span>
+                            </DropdownMenuItem>
+                        )
+                    }
                     {/* <DropdownMenuSeparator /> */}
                 </DropdownMenuContent>
             </DropdownMenu>

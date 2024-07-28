@@ -28,7 +28,7 @@ model User {
   comments        Comment[]
   images          Image[]
   videos          Video[]
-
+  upvotes         Upvote[]
   @@map("users")
 }
 
@@ -43,7 +43,8 @@ model Idea {
   images        Image[]
   videos        Video[]
   views         Int       @default(0)
-  upvotes       Int       @default(0)
+  upvotes       Upvote[]
+  upvotesCount  Int       @default(0) @map("upvotes_count")
   comments      Comment[]
   category      String
   tags          String[]
@@ -105,4 +106,16 @@ model Otp {
   updatedAt DateTime @updatedAt
 
   @@map("otps")
+}
+
+model Upvote{
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  ideaId    String   @map("idea_id")
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("upvotes")
 }

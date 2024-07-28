@@ -7,7 +7,7 @@ const queries = {
             return {error: "Not authenticated"};
         };
         
-        const res = await ideaService.getIdeas();
+        const res = await ideaService.getIdeas(authToken);
         console.log(res.ideas)
         if (res.success) return res.ideas;
         else return {error: res.error};
@@ -17,6 +17,7 @@ const queries = {
 const mutations = {
     createIdea: async (_, {ideaInput}, context) => {
         const authToken = context.req.req.headers.authtoken;
+        console.log(context.req.req.headers)
         if (!authToken) {
             return {error: "Not authenticated"};
         };

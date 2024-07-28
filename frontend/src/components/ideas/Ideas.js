@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import Idea from "./Idea";
 import { useQuery } from "@apollo/client";
@@ -18,12 +19,7 @@ const Ideas = () => {
     }, [getIdeasData]);
     return (
         <div className="lg:flex lg:space-x-8 space-y-8 lg:space-y-0 w-full">
-            <div className="space-y-8 w-full lg:w-1/2">
-                {ideas.map((idea, index) => {
-                    return <Idea key={index} idea={idea} />;
-                })}
-            </div>
-            <div className="space-y-8 w-full lg:w-1/2">
+            <div className="space-y-8 w-full">
                 {ideas.map((idea, index) => {
                     return <Idea key={index} idea={idea} />;
                 })}

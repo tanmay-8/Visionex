@@ -116,6 +116,11 @@ class UserService {
                 where: {
                     id: decoded.userId,
                 },
+                include: {
+                    ideas: true,
+                    comments: true,
+                    upvotes: true,
+                },
             });
 
             if (!user) {

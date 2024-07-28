@@ -83,7 +83,7 @@ class IdeaService {
         }
     }
 
-    async getIdeas() {
+    async getIdeas(authtoken) {
         try {
             const ideas = await prismaClient.idea.findMany({
                 include: {
@@ -91,7 +91,11 @@ class IdeaService {
                     images: true,
                     videos: true,
                     comments: true,
+                    upvotes: true,
                 },
+                orderBy:{
+                    createdAt : "desc"
+                }
             });
 
             for(let i=0;i<ideas.length;i++){
@@ -108,6 +112,7 @@ class IdeaService {
                 });
                 idea.images = images;
                 idea.videos = videos;
+                idea.isMine = (await userService.getCurrentUser(authtoken)).user.id === idea.ownerId;
             }
             return { ideas, success: true };
         } catch (err) {

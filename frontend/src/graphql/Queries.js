@@ -19,7 +19,7 @@ export const GET_IDEAS = gql`
             category
             tags
             views
-            upvotes
+            upvotesCount
             email
             phone
             linkedin
@@ -36,6 +36,10 @@ export const GET_IDEAS = gql`
                 name
                 profileImageUrl
             }
+            upvotes{
+                userId
+            }
+            isMine 
         }
     }
 `;

@@ -5,6 +5,9 @@ const typeDefs = `#graphql
         email: String!
         username: String!
         profileImageUrl: String
+        comments: [Comment!]
+        ideas: [Idea!]
+        upvotes: [Upvote!]
         birthDate: String!
         createdAt: String!
         updatedAt: String!
