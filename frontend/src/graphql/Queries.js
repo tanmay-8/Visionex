@@ -36,10 +36,29 @@ export const GET_IDEAS = gql`
                 name
                 profileImageUrl
             }
-            upvotes{
+            upvotes {
                 userId
             }
-            isMine 
+            isMine
+        }
+    }
+`;
+
+export const GET_USER_BASIC_INFO = gql`
+    query Query {
+        getCurrentUser {
+            ... on User {
+                name
+                email
+                username
+                profileImageUrl
+                birthDate
+                createdAt
+                updatedAt
+            }
+            ... on Error {
+                error
+            }
         }
     }
 `;
