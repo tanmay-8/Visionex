@@ -7,11 +7,11 @@ const {
 const { prismaClient } = require("../lib/db");
 
 class ImageService {
-    async uploadImage(fileBuffer, fileName, mimetype) {
+    async uploadImage(fileBuffer, folder, fileName, mimetype) {
         try {
             const result = await uploadFile(
                 fileBuffer,
-                "PostImages/" + fileName,
+                folder + "/" + fileName,
                 mimetype
             );
             if (result.$metadata.httpStatusCode === 200) {
@@ -55,9 +55,9 @@ class ImageService {
             return { error: err, success: false };
         }
     }
-    async getSignedUrl(key) {
+    async getSignedUrl(key, folder) {
         try {
-            key = "PostImages/" + key;
+            key = folder + "/" + key;
             const url = await getObjectSignedUrl(key);
             return { success: true, url };
         } catch (err) {
@@ -67,12 +67,12 @@ class ImageService {
     }
     async createImage(input) {
         try {
-            const { fileName,ownerId, ideaId } = input;
+            const { fileName, ownerId, ideaId } = input;
             const result = await this.makeUndeletable(fileName);
             if (result.success) {
                 const image = await prismaClient.image.create({
                     data: {
-                        name:fileName,
+                        name: fileName,
                         ownerId,
                         ideaId,
                     },

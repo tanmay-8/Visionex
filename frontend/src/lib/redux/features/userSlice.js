@@ -4,7 +4,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     isLogged: localStorage.getItem("visionToken") ? true : false,
     authToken: localStorage.getItem("visionToken"),
-    user: null
+    email: null,
+    name: null,
+    username: null,
+    birthDate: null,
+    profileImageUrl: null,
+    createdAt: null,
+    updatedAt: null
 }
 
 const userSlice = createSlice({
@@ -18,9 +24,22 @@ const userSlice = createSlice({
         logout: (state) => {
             state.isLogged = false;
             state.user = null;
+        },
+        setUserData: (state, action) => {
+            state.email = action.payload.email;
+            state.name = action.payload.name;
+            state.username = action.payload.username;
+            state.birthDate = action.payload.birthDate;
+            state.profileImageUrl = action.payload.profileImageUrl;
+            state.createdAt = action.payload.createdAt;
+            state.updatedAt = action.payload.updatedAt;
+        },
+        updateProfileImage: (state, action) => {
+            state.profileImageUrl = action.payload;
         }
+
     }
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout,setUserData,updateProfileImage } = userSlice.actions;
 export const userReducer = userSlice.reducer;

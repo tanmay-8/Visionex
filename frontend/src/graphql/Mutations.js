@@ -41,6 +41,16 @@ export const REGISTER_USER = gql`
     }
 `;
 
+export const UPDATE_PROFILE_IMAGE = gql`
+    mutation UpdateProfileImage($profileImageUrl: String!) {
+        updateProfileImage(profileImageUrl: $profileImageUrl) {
+            error
+            url
+            success
+        }
+    }
+`;
+
 export const CREATE_IDEA = gql`
     mutation CreateIdea(
         $title: String!

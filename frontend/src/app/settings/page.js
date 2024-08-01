@@ -9,11 +9,13 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery } from "@apollo/client";
 import { GET_USER_BASIC_INFO } from "@/graphql/Queries";
+import EditProfileImage from "@/components/Settings/EditProfileImage";
+import { setUserData } from "@/lib/redux/features/userSlice";
 
 const Settings = () => {
     const theme = useAppSelector((state) => state.theme);
     const dispatch = useAppDispatch();
-    const { data: user, loading, error } = useQuery(GET_USER_BASIC_INFO);
+    const { data: userData, loading, error } = useQuery(GET_USER_BASIC_INFO);
     const toggleTheme = () => {
         if (theme.theme === "light") {
             dispatch(setTheme("dark"));
@@ -23,14 +25,26 @@ const Settings = () => {
             localStorage.setItem("theme", "light");
         }
     };
+    const user = useAppSelector((state) => state.user);
     useEffect(() => {
-        if (user) {
-            console.log(user);
+        if (userData) {
+            dispatch(
+                setUserData({
+                    email: userData.getCurrentUser.email,
+                    name: userData.getCurrentUser.name,
+                    username: userData.getCurrentUser.username,
+                    birthDate: userData.getCurrentUser.birthDate,
+                    profileImageUrl: userData.getCurrentUser.profileImageUrl,
+                    createdAt: userData.getCurrentUser.createdAt,
+                    updatedAt: userData.getCurrentUser.updatedAt,
+                })
+            );
         }
-    }, [user]);
+        console.log(user);
+    }, [userData]);
     return (
         <div className="space-y-12">
-            {!loading && (
+            {!loading && user && (
                 <>
                     <div className="pb-4">
                         <h1 className="text-3xl font-bold">Settings</h1>
@@ -40,9 +54,9 @@ const Settings = () => {
                             <AvatarImage
                                 className={`w-24 h-24`}
                                 src={
-                                    (user &&
-                                        user.getCurrentUser.profileImageUrl) ||
-                                    ""
+                                    user && user.profileImageUrl
+                                        ? user.profileImageUrl
+                                        : ""
                                 }
                             />
                             <AvatarFallback>CN</AvatarFallback>
@@ -52,9 +66,10 @@ const Settings = () => {
                                 Profile Picture
                             </div>
                             <div className="flex space-x-4 p-1">
-                                <button className="w-24 py-2 rounded-lg text-white bg-main">
+                                {/* <button className="w-24 py-2 rounded-lg text-white bg-main">
                                     Edit
-                                </button>
+                                </button> */}
+                                <EditProfileImage user={user} />
                                 <button className="w-24 py-2 rounded-lg border border-red-500 text-red-500">
                                     Delete
                                 </button>
@@ -71,7 +86,7 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="NAME"
-                                    value={user && user.getCurrentUser.name}
+                                    value={user && user.name}
                                 />
                             </div>
                             <div className="space-y-2 flex flex-col">
@@ -81,7 +96,7 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="USERNAME"
-                                    value={user && user.getCurrentUser.username}
+                                    value={user && user.username}
                                 />
                             </div>
                         </div>
@@ -93,16 +108,14 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="EMAIL"
-                                    value={user && user.getCurrentUser.email}
+                                    value={user && user.email}
                                 />
                             </div>
                             <div className="space-y-2 flex flex-col">
                                 <Label className="dark:text-gray-300 text-gray-800">
                                     BIRTH-DATE
                                 </Label>
-                                <DatePicker
-                                    date={user && user.getCurrentUser.birthDate}
-                                />
+                                <DatePicker date={user && user.birthDate} />
                             </div>
                         </div>
                     </div>

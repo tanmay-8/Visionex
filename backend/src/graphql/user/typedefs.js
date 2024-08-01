@@ -24,6 +24,12 @@ const typeDefs = `#graphql
     union LoginResponse = LoginOk | Error
     union createUserResponse = User | Error
     
+
+    type UpdateProfileImageResponse{
+        success:Boolean!
+        error:String
+        url:String
+    }
   
 `;
 

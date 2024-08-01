@@ -14,8 +14,10 @@ router.post("/uploadImage", upload.single("photo"), async (req, res) => {
         const fileName = generateRandomString();
         const fileBuffer = file.buffer;
         const mimetype = file.mimetype;
+        const folder = req.body.folder;
         const uploadres = await imageService.uploadImage(
             fileBuffer,
+            folder,
             fileName,
             mimetype
         );

@@ -33,6 +33,7 @@ const AddIdeaImages = () => {
             newImages = [...curIdea.images];
             const data = new FormData();
             data.append("photo", image);
+            data.append("folder", "PostImages");
             const res = await fetch(
                 "http://localhost:5000/api/image/uploadImage",
                 {

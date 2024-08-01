@@ -22,7 +22,6 @@ const Sidebar = () => {
     const pathname = usePathname();
     const user = useAppSelector((state)=>state.user);
     const dispatch = useAppDispatch();
-    console.log(user)
 
     const [iconColor, setIconColor] = useState("");
     const handleLogout = () => {

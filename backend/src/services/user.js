@@ -6,13 +6,21 @@ const {
     isValidName,
     isValidPassword,
 } = require("../validators/userValidators");
+const { imageService } = require("./image");
 
 require("dotenv").config();
 
 class UserService {
     async createUser(input) {
         try {
-            const { name, email, password, profileImageUrl,username ,birthDate} = input;
+            const {
+                name,
+                email,
+                password,
+                profileImageUrl,
+                username,
+                birthDate,
+            } = input;
             if (
                 !isValidEmail(email) ||
                 !isValidName(name) ||
@@ -28,7 +36,7 @@ class UserService {
                     email: email,
                 },
             });
-            
+
             if (alUser) {
                 return {
                     error: "Email already exists",
@@ -58,7 +66,7 @@ class UserService {
                     password: hashedpassword,
                     profileImageUrl,
                     username,
-                    birthDate:new Date(birthDate)
+                    birthDate: new Date(birthDate),
                 },
             });
             return { user: user, success: true };
@@ -76,7 +84,7 @@ class UserService {
         });
     }
 
-    async getToken(email, password ) {
+    async getToken(email, password) {
         try {
             const user = await this.getUserByEmail(email);
             if (!user) {
@@ -100,8 +108,8 @@ class UserService {
                 return { error: "Invalid email or password", success: false };
             }
             const token = await this.getToken(email, password);
-            if(token.success){
-                return { token: token, success: true }
+            if (token.success) {
+                return { token: token, success: true };
             }
             return { error: token.error, success: false };
         } catch (err) {
@@ -123,11 +131,43 @@ class UserService {
                 },
             });
 
+            if (user.profileImageUrl != null) {
+                const profileImageUrl = await imageService.getSignedUrl(
+                    user.profileImageUrl,"ProfileImages"
+                );
+                user.profileImageUrl = profileImageUrl.url;
+            }
             if (!user) {
                 return { success: false, error: "User not found" };
             }
             user.birthDate = user.birthDate.toISOString();
             return { user: user, success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+    async updateProfileImage(profileImageUrl, token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await prismaClient.user.update({
+                where: {
+                    id: decoded.userId,
+                },
+                data: {
+                    profileImageUrl: profileImageUrl,
+                },
+            });
+            if(user.profileImageUrl != null){
+                const url = await imageService.getSignedUrl(user.profileImageUrl);
+                if(url.success){
+                    return { success: true, url: url};
+                }
+                else{
+                    return {success:false, error:"Error getting signed url"};
+                }
+            }
+            return {success:false, error:"Error updating profile image"};
         } catch (err) {
             console.log(err);
             return { success: false, error: err };

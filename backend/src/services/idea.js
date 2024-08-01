@@ -101,12 +101,12 @@ class IdeaService {
             for(let i=0;i<ideas.length;i++){
                 const idea = ideas[i];
                 const images = idea.images.map(async (image) => {
-                    const url = await imageService.getSignedUrl(image.name);
+                    const url = await imageService.getSignedUrl(image.name,"PostImages");
                     image.url = url.url;
                     return image;
                 });
                 const videos = idea.videos.map(async (video) => {
-                    const url = await videoService.getSignedUrl(video.name);
+                    const url = await videoService.getSignedUrl(video.name,"PostVideos");
                     video.url = url.url;
                     return video;
                 });

@@ -21,7 +21,7 @@ model User {
   birthDate       DateTime  @map("birth_date")
   password        String?
   isVerified      Boolean   @default(false) @map("is_verified")
-  profileImageURL String?   @map("profile_image_url")
+  profileImageUrl String?   @map("profile_image_url")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   ideas           Idea[]
