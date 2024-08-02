@@ -3,6 +3,7 @@ const {
     makeUndeletable,
     makeDeletable,
     getObjectSignedUrl,
+    deleteFile,
 } = require("../lib/s3");
 const { prismaClient } = require("../lib/db");
 
@@ -88,6 +89,20 @@ class ImageService {
         } catch (err) {
             console.log(err);
             return { error: err, success: false };
+        }
+    }
+    async deleteImage(key){
+        try{
+            const result = await deleteFile(key);
+            if(result.success){
+                return {success:true};
+            }
+            else{
+                return {error:"Error deleting image", success:false};
+            }
+        }catch(err){
+            console.log(err);
+            return {error:err, success:false};
         }
     }
 }

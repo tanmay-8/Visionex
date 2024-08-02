@@ -13,6 +13,12 @@ const typeDefs = `#graphql
         updatedAt: String!
     }
 
+    input UpdateProfileInput {
+        username: String
+        name: String
+        birthDate: String
+    }
+
     type LoginOk {
         token: String
     }
@@ -29,6 +35,12 @@ const typeDefs = `#graphql
         success:Boolean!
         error:String
         url:String
+    }
+
+    type UpdateProfileResponse{
+        success:Boolean!
+        error:String
+        data:User
     }
   
 `;

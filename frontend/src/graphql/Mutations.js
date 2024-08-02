@@ -51,6 +51,21 @@ export const UPDATE_PROFILE_IMAGE = gql`
     }
 `;
 
+export const UPDATE_PROFILE = gql`
+    mutation UpdateProfile($input: UpdateProfileInput) {
+        updateProfile(input: $input) {
+            error
+            success
+            data{
+                name
+                email
+                username
+                birthDate
+            }
+        }
+    }
+`;
+
 export const CREATE_IDEA = gql`
     mutation CreateIdea(
         $title: String!

@@ -21,7 +21,7 @@ const AddIdea = () => {
     const desc = useAppSelector((state) => state.addIdea.description);
 
     return (
-        <div className="bg-light-bg-sec dark:bg-dark-bg-sec space-y-6 rounded-xl shadow-sm p-4 md:p-8">
+        <div className="bg-light-bg-sec dark:bg-dark-bg-sec space-y-6 rounded-xl shadow-sm p-4 md:p-8 lg:w-3/4 xl:w-2/3">
             <div className="flex space-x-4 ">
                 <div className="h-full">
                     <UserBanner/>

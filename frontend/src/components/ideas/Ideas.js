@@ -18,7 +18,7 @@ const Ideas = () => {
         }
     }, [getIdeasData]);
     return (
-        <div className="lg:flex lg:space-x-8 space-y-8 lg:space-y-0 w-full">
+        <div className="lg:flex lg:space-x-8 space-y-8 lg:space-y-0 w-full lg:w-3/4 xl:w-2/3">
             <div className="space-y-8 w-full">
                 {ideas.map((idea, index) => {
                     return <Idea key={index} idea={idea} />;

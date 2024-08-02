@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -10,8 +10,8 @@ const initialState = {
     birthDate: null,
     profileImageUrl: null,
     createdAt: null,
-    updatedAt: null
-}
+    updatedAt: null,
+};
 
 const userSlice = createSlice({
     name: "user",
@@ -19,7 +19,7 @@ const userSlice = createSlice({
     reducers: {
         login: (state, action) => {
             state.isLogged = true;
-            state.authToken = action.payload
+            state.authToken = action.payload;
         },
         logout: (state) => {
             state.isLogged = false;
@@ -36,10 +36,30 @@ const userSlice = createSlice({
         },
         updateProfileImage: (state, action) => {
             state.profileImageUrl = action.payload;
-        }
-
-    }
+        },
+        setUserEmail: (state, action) => {
+            state.email = action.payload;
+        },
+        setUserName: (state, action) => {
+            state.name = action.payload;
+        },
+        setUserUsername: (state, action) => {
+            state.username = action.payload;
+        },
+        setUserBirthDate: (state, action) => {
+            state.birthDate = action.payload;
+        },
+    },
 });
 
-export const { login, logout,setUserData,updateProfileImage } = userSlice.actions;
+export const {
+    login,
+    logout,
+    setUserData,
+    updateProfileImage,
+    setUserBirthDate,
+    setUserEmail,
+    setUserName,
+    setUserUsername,
+} = userSlice.actions;
 export const userReducer = userSlice.reducer;

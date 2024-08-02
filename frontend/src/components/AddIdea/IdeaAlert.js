@@ -62,9 +62,11 @@ const IdeaAlert = ({ open, handleOpen, message, type }) => {
                     )}
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogAction onClick={handleOpen}>
-                        Ok
-                    </AlertDialogAction>
+                    {type !== "Loading" && (
+                        <AlertDialogAction onClick={handleOpen}>
+                            Ok
+                        </AlertDialogAction>
+                    )}
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

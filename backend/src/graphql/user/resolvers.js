@@ -53,15 +53,23 @@ const mutations = {
     updateProfileImage: async (_, { profileImageUrl }, context) => {
         const authToken = context.req.req.headers.authtoken;
         if (!authToken) {
-            return { error: "Not authenticated" ,success:false};
+            return { error: "Not authenticated", success: false };
         }
 
         const res = await userService.updateProfileImage(
             profileImageUrl,
             authToken
         );
-        if (res.success)
-            return { success: true, url:res.url.url};
+        if (res.success) return { success: true, url: res.url.url };
+        else return { error: res.error, success: false };
+    },
+    updateProfile: async (_, { input }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.updateProfile(input, authToken);
+        if (res.success) return { success: true, data: res.user };
         else return { error: res.error, success: false };
     },
 };

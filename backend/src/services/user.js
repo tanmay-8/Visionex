@@ -117,6 +117,7 @@ class UserService {
             return { error: "Invalid email or password", success: false };
         }
     }
+
     async getCurrentUser(token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -133,7 +134,8 @@ class UserService {
 
             if (user.profileImageUrl != null) {
                 const profileImageUrl = await imageService.getSignedUrl(
-                    user.profileImageUrl,"ProfileImages"
+                    user.profileImageUrl,
+                    "ProfileImages"
                 );
                 user.profileImageUrl = profileImageUrl.url;
             }
@@ -147,9 +149,19 @@ class UserService {
             return { success: false, error: err };
         }
     }
+
     async updateProfileImage(profileImageUrl, token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const prevUrl = await prismaClient.user.findUnique({
+                where: {
+                    id: decoded.userId,
+                },
+                select: {
+                    profileImageUrl: true,
+                },
+            });
+
             const user = await prismaClient.user.update({
                 where: {
                     id: decoded.userId,
@@ -158,16 +170,64 @@ class UserService {
                     profileImageUrl: profileImageUrl,
                 },
             });
-            if(user.profileImageUrl != null){
-                const url = await imageService.getSignedUrl(user.profileImageUrl);
-                if(url.success){
-                    return { success: true, url: url};
-                }
-                else{
-                    return {success:false, error:"Error getting signed url"};
+            if (prevUrl.profileImageUrl != null) {
+                const res = await imageService.deleteImage("ProfileImages/"+prevUrl.profileImageUrl);
+                console.log(res);
+            }
+            if (user.profileImageUrl != null) {
+                const url = await imageService.getSignedUrl(
+                    user.profileImageUrl
+                );
+                if (url.success) {
+                    return { success: true, url: url };
+                } else {
+                    return {
+                        success: false,
+                        error: "Error getting signed url",
+                    };
                 }
             }
-            return {success:false, error:"Error updating profile image"};
+            return { success: false, error: "Error updating profile image" };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+
+    async updateProfile(input, token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const { username, name, birthDate } = input;
+
+            if (!isValidName(name)) {
+                return { success: false, error: "Invalid name" };
+            }
+
+            let alUser = await prismaClient.user.findFirst({
+                where: {
+                    username: username,
+                    NOT: {
+                        id: decoded.userId,
+                    },
+                },
+            });
+
+            if (alUser) {
+                return { success: false, error: "Username already exists" };
+            }
+
+            const user = await prismaClient.user.update({
+                where: {
+                    id: decoded.userId,
+                },
+                data: {
+                    username: username,
+                    name: name,
+                    birthDate: new Date(birthDate),
+                },
+            });
+            user.birthDate = user.birthDate.toISOString();
+            return { user: user, success: true };
         } catch (err) {
             console.log(err);
             return { success: false, error: err };

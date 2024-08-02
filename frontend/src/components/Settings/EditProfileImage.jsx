@@ -5,6 +5,7 @@ import { Edit2Icon, PlusIcon, PlusSquareIcon } from "lucide-react";
 import { UPDATE_PROFILE_IMAGE } from "@/graphql/Mutations";
 import { useMutation } from "@apollo/client";
 import { updateProfileImage } from "@/lib/redux/features/userSlice";
+import Image from "next/image";
 
 const EditProfileImage = () => {
     const theme = useAppSelector((state) => state.theme.theme);
@@ -56,6 +57,7 @@ const EditProfileImage = () => {
 
             if (res.data.updateProfileImage.success) {
                 const url = res.data.updateProfileImage.url;
+                console.log(url);
                 dispatch(
                     updateProfileImage({
                         profileImageUrl: url,
@@ -68,8 +70,7 @@ const EditProfileImage = () => {
         } finally {
             setIsLoading(false);
         }
-    };
-    console.log(user.profileImageUrl);
+    };  
     return (
         <Dialog className="border-none font-main ">
             <DialogTrigger>
@@ -96,7 +97,7 @@ const EditProfileImage = () => {
                                 document.getElementById("fileInput").click();
                             }}
                         >
-                            <img
+                            <Image
                                 src={
                                     image
                                         ? URL.createObjectURL(image)
@@ -106,7 +107,9 @@ const EditProfileImage = () => {
                                 }
                                 alt="profile"
                                 className="rounded-full w-[200px] h-[200px] absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                            ></img>
+                                width={200}
+                                height={200}
+                            ></Image>
                             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                                 <div className="bg-black bg-opacity-50 rounded-full w-[200px] h-[200px] flex items-center justify-center">
                                     <div className=" text-2xl">

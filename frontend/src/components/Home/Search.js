@@ -13,7 +13,7 @@ const Search = () => {
     return (
         <div
             id="contSearch"
-            className="search bg-light-bg-sec dark:bg-dark-bg-sec w-full h-20 rounded-lg shadow-sm flex space-x-4 items-center px-6"
+            className="search bg-light-bg-sec dark:bg-dark-bg-sec w-full h-20 rounded-lg shadow-sm flex space-x-4 items-center px-6 lg:w-3/4 xl:w-2/3"
         >
             <SearchIcon size={25} color={iconColor} />
             <input

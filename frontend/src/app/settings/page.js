@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setTheme } from "@/lib/redux/features/themeSlice";
 import { Label } from "@/components/ui/label";
@@ -10,12 +10,34 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery } from "@apollo/client";
 import { GET_USER_BASIC_INFO } from "@/graphql/Queries";
 import EditProfileImage from "@/components/Settings/EditProfileImage";
-import { setUserData } from "@/lib/redux/features/userSlice";
+import {
+    setUserBirthDate,
+    setUserData,
+    setUserEmail,
+    setUserName,
+    setUserUsername,
+} from "@/lib/redux/features/userSlice";
+import { Edit2Icon } from "lucide-react";
+import { UPDATE_PROFILE } from "@/graphql/Mutations";
+import { useMutation } from "@apollo/client";
+import { set } from "date-fns";
+import IdeaAlert from "@/components/AddIdea/IdeaAlert";
 
 const Settings = () => {
     const theme = useAppSelector((state) => state.theme);
+    const [isEditabled, setIsEditabled] = useState(false);
     const dispatch = useAppDispatch();
-    const { data: userData, loading, error } = useQuery(GET_USER_BASIC_INFO);
+    const { data: userData } = useQuery(GET_USER_BASIC_INFO);
+    const [updateProfile, {}] = useMutation(UPDATE_PROFILE);
+    const [curData, setCurData] = useState({
+        name: "",
+        username: "",
+        birthDate: "",
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState("");
+    const [type, setType] = useState("");
+    const [open, setOpen] = useState(false);
     const toggleTheme = () => {
         if (theme.theme === "light") {
             dispatch(setTheme("dark"));
@@ -39,18 +61,94 @@ const Settings = () => {
                     updatedAt: userData.getCurrentUser.updatedAt,
                 })
             );
+
+            setCurData({
+                email: userData.getCurrentUser.email || "",
+                name: userData.getCurrentUser.name || "",
+                username: userData.getCurrentUser.username || "",
+                birthDate: userData.getCurrentUser.birthDate || "",
+            });
         }
         console.log(user);
     }, [userData]);
+
+    const isValidData = (data) => {
+        if (data.name.length < 3 || data.username.length < 3) {
+            setMessage("Name and username must be at least 3 characters");
+            setOpen(true);
+            setType("error");
+            return false;
+        }
+        if (data.birthDate === "") {
+            setMessage("Birth date is required");
+            setOpen(true);
+            setType("error");
+            return false;
+        }
+
+        return true;
+    };
+    const saveProfile = async () => {
+        setIsLoading(true);
+        if (!isValidData(curData)) {
+            return;
+        }
+        setOpen(true);
+        setType("Loading");
+        setMessage("Updating profile");
+        await new Promise((r) => setTimeout(r, 1000));
+        try {
+            const res = await updateProfile({
+                variables: {
+                    input: {
+                        name: curData.name,
+                        username: curData.username,
+                        birthDate: curData.birthDate,
+                    },
+                },
+            });
+            if (res.data.updateProfile.success) {
+                setMessage("Profile updated");
+                setType("success");
+                dispatch(setUserName(res.data.updateProfile.data.name));
+                dispatch(setUserUsername(res.data.updateProfile.data.username));
+                dispatch(
+                    setUserBirthDate(res.data.updateProfile.data.birthDate)
+                );
+
+                setCurData({
+                    ...curData,
+                    name: res.data.updateProfile.data.name,
+                    username: res.data.updateProfile.data.username,
+                    birthDate: res.data.updateProfile.data.birthDate,
+                });
+                setIsEditabled(false);
+            } else {
+                setMessage(res.data.updateProfile.error);
+                setType("error");
+            }
+        } catch {
+            setMessage("An error occured");
+            setType("error");
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <div className="space-y-12">
-            {!loading && user && (
+            <IdeaAlert
+                message={message}
+                type={type}
+                open={open}
+                handleOpen={() => setOpen(() => !open)}
+            />
+            {user && (
                 <>
                     <div className="pb-4">
                         <h1 className="text-3xl font-bold">Settings</h1>
                     </div>
                     <div className="flex  text-base font-medium space-x-4 md:space-x-8">
-                        <Avatar className={`w-24 h-24`}>
+                        <Avatar className={`w-24 h-24 border-gray-100`}>
                             <AvatarImage
                                 className={`w-24 h-24`}
                                 src={
@@ -76,9 +174,25 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-10 p-1">
-                        <div className="text-gray-500">Basic Information</div>
-                        <div className="space-y-10 lg:space-y-0 lg:flex lg:space-x-10">
+                    <div
+                        className={`space-y-10 p-1 ${
+                            !isEditabled ? "text-gray-500" : ""
+                        }`}
+                    >
+                        <div className="text-gray-500 flex justify-between ">
+                            <span>Basic Information</span>
+                            {!isEditabled && (
+                                <span
+                                    onClick={() => setIsEditabled(!isEditabled)}
+                                    className="cursor-pointer"
+                                >
+                                    <Edit2Icon className="w-5 h-5 text-gray-500" />
+                                </span>
+                            )}
+                        </div>
+                        <div
+                            className={`space-y-10 xl:space-y-0 xl:flex xl:space-x-10`}
+                        >
                             <div className="space-y-2 flex flex-col">
                                 <Label className="dark:text-gray-300 text-gray-800">
                                     NAME
@@ -86,7 +200,14 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="NAME"
-                                    value={user && user.name}
+                                    value={curData.name}
+                                    readOnly={!isEditabled}
+                                    onChange={(e) => {
+                                        setCurData({
+                                            ...curData,
+                                            name: e.target.value,
+                                        });
+                                    }}
                                 />
                             </div>
                             <div className="space-y-2 flex flex-col">
@@ -96,11 +217,18 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="USERNAME"
-                                    value={user && user.username}
+                                    value={curData.username}
+                                    readOnly={!isEditabled}
+                                    onChange={(e) => {
+                                        setCurData({
+                                            ...curData,
+                                            username: e.target.value,
+                                        });
+                                    }}
                                 />
                             </div>
                         </div>
-                        <div className="space-y-10 lg:space-y-0 lg:flex lg:space-x-10">
+                        <div className="space-y-10 xl:space-y-0 xl:flex xl:space-x-10">
                             <div className="space-y-2 flex flex-col">
                                 <Label className="dark:text-gray-300 text-gray-800">
                                     EMAIL
@@ -108,21 +236,45 @@ const Settings = () => {
                                 <input
                                     className="min-w-72 lg:min-w-96 p-4 dark:bg-dark-bg-sec bg-light-bg-sec rounded-lg outline-none "
                                     placeholder="EMAIL"
-                                    value={user && user.email}
+                                    value={curData.email}
+                                    readOnly
                                 />
                             </div>
                             <div className="space-y-2 flex flex-col">
                                 <Label className="dark:text-gray-300 text-gray-800">
                                     BIRTH-DATE
                                 </Label>
-                                <DatePicker date={user && user.birthDate} />
+                                <DatePicker
+                                    setDate={(e) => {
+                                        setCurData({
+                                            ...curData,
+                                            birthDate: e,
+                                        });
+                                        console.log(curData);
+                                    }}
+                                    date={curData.birthDate}
+                                    isEditabled={isEditabled}
+                                />
                             </div>
                         </div>
+                        {isEditabled && (
+                            <div className="flex justify-end ">
+                                <button
+                                    className="w-24 py-2 rounded-lg text-white bg-main"
+                                    onClick={() => {
+                                        saveProfile();
+                                    }}
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        )}
                     </div>
+
                     <Separator className="h-[1px] bg-gray-500" />
                     <div className="space-y-10 p-1">
                         <div className="text-gray-500">Other</div>
-                        <div className="space-y-10 lg:space-y-0 lg:flex lg:space-x-10">
+                        <div className="space-y-10 xl:space-y-0 xl:flex xl:space-x-10">
                             <div className="flex items-center space-x-4">
                                 <Switch
                                     id="airplane-mode"
