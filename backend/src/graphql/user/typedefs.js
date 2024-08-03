@@ -42,7 +42,11 @@ const typeDefs = `#graphql
         error:String
         data:User
     }
-  
+
+    type DeleteProfileImageResponse{
+        success:Boolean!
+        error:String
+    }
 `;
 
 module.exports = { typeDefs };

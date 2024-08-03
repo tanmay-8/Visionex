@@ -233,6 +233,37 @@ class UserService {
             return { success: false, error: err };
         }
     }
+
+    async deleteProfileImage(token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const prevUrl = await prismaClient.user.findUnique({
+                where: {
+                    id: decoded.userId,
+                },
+                select: {
+                    profileImageUrl: true,
+                },
+            });
+
+            const user = await prismaClient.user.update({
+                where: {
+                    id: decoded.userId,
+                },
+                data: {
+                    profileImageUrl: null,
+                },
+            });
+            if (prevUrl.profileImageUrl != null) {
+                const res = await imageService.deleteImage("ProfileImages/"+prevUrl.profileImageUrl);
+                console.log(res);
+            }
+            return { success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
 }
 
 module.exports = { userService: new UserService() };

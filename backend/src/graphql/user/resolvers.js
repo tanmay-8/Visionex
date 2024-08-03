@@ -72,6 +72,15 @@ const mutations = {
         if (res.success) return { success: true, data: res.user };
         else return { error: res.error, success: false };
     },
+    deleteProfileImage: async (_, __, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.deleteProfileImage(authToken);
+        if (res.success) return { success: true };
+        else return { error: res.error, success: false };
+    },
 };
 
 const resolvers = {

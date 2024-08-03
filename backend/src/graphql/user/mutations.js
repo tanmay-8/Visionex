@@ -3,6 +3,7 @@ const mutations = `#graphql
     login(email:String!,password:String!): LoginResponse
     updateProfileImage(profileImageUrl:String!): UpdateProfileImageResponse!
     updateProfile(input:UpdateProfileInput): UpdateProfileResponse!
+    deleteProfileImage: DeleteProfileImageResponse!
 `;
 
 module.exports = { mutations };

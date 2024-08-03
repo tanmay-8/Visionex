@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+// User Mutations
 export const LOGIN_USER = gql`
     mutation login($email: String!, $password: String!) {
         login(email: $email, password: $password) {
@@ -56,7 +57,7 @@ export const UPDATE_PROFILE = gql`
         updateProfile(input: $input) {
             error
             success
-            data{
+            data {
                 name
                 email
                 username
@@ -66,6 +67,17 @@ export const UPDATE_PROFILE = gql`
     }
 `;
 
+export const DELETE_PROFILE_IMAGE = gql`
+    mutation DeleteProfileImage {
+        deleteProfileImage {
+            error
+            success
+        }
+    }
+`;
+
+
+// Idea Mutations
 export const CREATE_IDEA = gql`
     mutation CreateIdea(
         $title: String!

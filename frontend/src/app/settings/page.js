@@ -16,9 +16,10 @@ import {
     setUserEmail,
     setUserName,
     setUserUsername,
+    updateProfileImage
 } from "@/lib/redux/features/userSlice";
 import { Edit2Icon } from "lucide-react";
-import { UPDATE_PROFILE } from "@/graphql/Mutations";
+import { DELETE_PROFILE_IMAGE, UPDATE_PROFILE } from "@/graphql/Mutations";
 import { useMutation } from "@apollo/client";
 import { set } from "date-fns";
 import IdeaAlert from "@/components/AddIdea/IdeaAlert";
@@ -27,8 +28,11 @@ const Settings = () => {
     const theme = useAppSelector((state) => state.theme);
     const [isEditabled, setIsEditabled] = useState(false);
     const dispatch = useAppDispatch();
+
     const { data: userData } = useQuery(GET_USER_BASIC_INFO);
     const [updateProfile, {}] = useMutation(UPDATE_PROFILE);
+    const [deleteProfileImage, {}] = useMutation(DELETE_PROFILE_IMAGE);
+
     const [curData, setCurData] = useState({
         name: "",
         username: "",
@@ -134,6 +138,27 @@ const Settings = () => {
             setIsLoading(false);
         }
     };
+
+    const deleteImage = async () => {
+        try {
+            setOpen(true);
+            setMessage("Deleting profile image");
+            setType("Loading");
+            const res = await deleteProfileImage();
+            if (res.data.deleteProfileImage.success) {
+                setMessage("Profile image deleted");
+                setType("success");
+                dispatch(updateProfileImage(null));
+            } else {
+                setMessage(res.data.deleteProfileImage.error);
+                setType("error");
+            }
+        } catch (e){
+            console.log(e);
+            setMessage("An error occured");
+            setType("error");
+        }
+    };
     return (
         <div className="space-y-12">
             <IdeaAlert
@@ -168,7 +193,12 @@ const Settings = () => {
                                     Edit
                                 </button> */}
                                 <EditProfileImage user={user} />
-                                <button className="w-24 py-2 rounded-lg border border-red-500 text-red-500">
+                                <button
+                                    onClick={() => {
+                                        deleteImage();
+                                    }}
+                                    className="w-24 py-2 rounded-lg border border-red-500 text-red-500"
+                                >
                                     Delete
                                 </button>
                             </div>

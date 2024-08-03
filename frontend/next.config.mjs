@@ -4,6 +4,9 @@ const nextConfig = {
         remotePatterns:[
             {
                 hostname:"visionex.s3.eu-north-1.amazonaws.com",
+            },
+            {
+                hostname:"via.placeholder.com"
             }
         ]
     }
