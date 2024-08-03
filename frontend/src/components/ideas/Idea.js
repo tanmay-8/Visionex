@@ -13,7 +13,7 @@ const Idea = ({ idea }) => {
         <div className="flex flex-col p-4 md:p-6 space-y-3  bg-light-bg-sec dark:bg-dark-bg-sec rounded-xl shadow-sm w-full min-h-72">
             <div className="flex justify-between items-center">
                 <div className="flex space-x-3 items-center">
-                    <UserBanner />
+                    <UserBanner src={idea.owner?.profileImageUrl} />
                     <div>
                         <h1 className="text-xl font-semibold">
                             {idea.owner.name}
