@@ -16,7 +16,7 @@ import {
     setUserEmail,
     setUserName,
     setUserUsername,
-    updateProfileImage
+    updateProfileImage,
 } from "@/lib/redux/features/userSlice";
 import { Edit2Icon } from "lucide-react";
 import { DELETE_PROFILE_IMAGE, UPDATE_PROFILE } from "@/graphql/Mutations";
@@ -29,7 +29,6 @@ const Settings = () => {
     const [isEditabled, setIsEditabled] = useState(false);
     const dispatch = useAppDispatch();
 
-    const { data: userData } = useQuery(GET_USER_BASIC_INFO);
     const [updateProfile, {}] = useMutation(UPDATE_PROFILE);
     const [deleteProfileImage, {}] = useMutation(DELETE_PROFILE_IMAGE);
 
@@ -53,28 +52,14 @@ const Settings = () => {
     };
     const user = useAppSelector((state) => state.user);
     useEffect(() => {
-        if (userData) {
-            dispatch(
-                setUserData({
-                    email: userData.getCurrentUser.email,
-                    name: userData.getCurrentUser.name,
-                    username: userData.getCurrentUser.username,
-                    birthDate: userData.getCurrentUser.birthDate,
-                    profileImageUrl: userData.getCurrentUser.profileImageUrl,
-                    createdAt: userData.getCurrentUser.createdAt,
-                    updatedAt: userData.getCurrentUser.updatedAt,
-                })
-            );
-
-            setCurData({
-                email: userData.getCurrentUser.email || "",
-                name: userData.getCurrentUser.name || "",
-                username: userData.getCurrentUser.username || "",
-                birthDate: userData.getCurrentUser.birthDate || "",
-            });
-        }
+        setCurData({
+            email: user.email || "",
+            name: user.name || "",
+            username: user.username || "",
+            birthDate: user.birthDate || "",
+        });
         console.log(user);
-    }, [userData]);
+    }, [user]);
 
     const isValidData = (data) => {
         if (data.name.length < 3 || data.username.length < 3) {
@@ -153,7 +138,7 @@ const Settings = () => {
                 setMessage(res.data.deleteProfileImage.error);
                 setType("error");
             }
-        } catch (e){
+        } catch (e) {
             console.log(e);
             setMessage("An error occured");
             setType("error");

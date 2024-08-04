@@ -19,6 +19,12 @@ const typeDefs = `#graphql
         birthDate: String
     }
 
+    type GetUserProfileResponse{
+        user:User
+        success: Boolean!
+        error:String
+    }
+
     type LoginOk {
         token: String
     }

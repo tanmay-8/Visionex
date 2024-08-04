@@ -150,6 +150,62 @@ class UserService {
         }
     }
 
+    async getUserProfile(username) {
+        try {
+            const user = await prismaClient.user.findFirst({
+                where: {
+                    username: username,
+                },
+                include: {
+                    ideas: {
+                        include: {
+                            images: true,
+                            videos: true,
+                            owner: true,
+                            upvotes: true,
+                            comments: true,
+                        },
+                    },
+                },
+            });
+
+            if (user.profileImageUrl != null) {
+                const profileImageUrl = await imageService.getSignedUrl(
+                    user.profileImageUrl,
+                    "ProfileImages"
+                );
+                user.profileImageUrl = profileImageUrl.url;
+            }
+
+            for (let i = 0; i < user.ideas.length; i++) {
+                const idea = user.ideas[i];
+                for (let j = 0; j < idea.images.length; j++) {
+                    const imageUrl = await imageService.getSignedUrl(
+                        idea.images[j].name,
+                        "PostImages"
+                    );
+                    idea.images[j].url = imageUrl.url;
+                    console.log(imageUrl);
+                }
+                for (let j = 0; j < idea.videos.length; j++) {
+                    const videoUrl = await imageService.getSignedUrl(
+                        idea.videos[j].name,
+                        "PostVideos"
+                    );
+                    idea.videos[j].videoUrl = videoUrl.url;
+                }
+            }
+
+            if (!user) {
+                return { success: false, error: "User not found" };
+            }
+            return { user: user, success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+
     async updateProfileImage(profileImageUrl, token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -171,7 +227,9 @@ class UserService {
                 },
             });
             if (prevUrl.profileImageUrl != null) {
-                const res = await imageService.deleteImage("ProfileImages/"+prevUrl.profileImageUrl);
+                const res = await imageService.deleteImage(
+                    "ProfileImages/" + prevUrl.profileImageUrl
+                );
                 console.log(res);
             }
             if (user.profileImageUrl != null) {
@@ -255,7 +313,9 @@ class UserService {
                 },
             });
             if (prevUrl.profileImageUrl != null) {
-                const res = await imageService.deleteImage("ProfileImages/"+prevUrl.profileImageUrl);
+                const res = await imageService.deleteImage(
+                    "ProfileImages/" + prevUrl.profileImageUrl
+                );
                 console.log(res);
             }
             return { success: true };

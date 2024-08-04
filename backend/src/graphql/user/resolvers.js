@@ -12,6 +12,18 @@ const queries = {
         if (res.success) return { ...res.user, __typename: "User" };
         else return { error: res.error, __typename: "Error" };
     },
+
+    getUserProfile: async (_, { username }) => {
+        const res = await userService.getUserProfile(username);
+        if (res.success) {
+            return {
+                user: res.user,
+                success: true,
+            };
+        } else {
+            return { error: res.error, success: false };
+        }
+    },
 };
 
 const mutations = {

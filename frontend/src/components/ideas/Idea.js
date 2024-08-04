@@ -16,7 +16,7 @@ const Idea = ({ idea }) => {
                     <UserBanner src={idea.owner?.profileImageUrl} />
                     <div>
                         <h1 className="text-xl font-semibold">
-                            {idea.owner.name}
+                            {idea.owner.username}
                         </h1>
                         <p>{getTimeString(Date.now() - idea.createdAt)}</p>
                     </div>

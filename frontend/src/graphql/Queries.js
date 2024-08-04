@@ -33,7 +33,7 @@ export const GET_IDEAS = gql`
                 userId
             }
             owner {
-                name
+                username
                 profileImageUrl
             }
             upvotes {
@@ -58,6 +58,46 @@ export const GET_USER_BASIC_INFO = gql`
             }
             ... on Error {
                 error
+            }
+        }
+    }
+`;
+
+export const GET_USER_PROFILE = gql`
+    query GetUserProfile($username: String!) {
+        getUserProfile(username: $username) {
+            error
+            success
+            user {
+                name
+                profileImageUrl
+                username
+                upvotes {
+                    ideaId
+                }
+                ideas {
+                    title
+                    videos {
+                        description
+                        createdAt
+                        id
+                        url
+                        updatedAt
+                        name
+                        ideaId
+                    }
+                    images{
+                        name
+                        url
+                    }
+                    views
+                    upvotesCount
+                    commentsCount
+                }
+                comments {
+                    text
+                    ideaId
+                }
             }
         }
     }

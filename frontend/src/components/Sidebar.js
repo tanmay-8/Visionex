@@ -15,24 +15,48 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { logout } from "@/lib/redux/features/userSlice";
+import { logout, setUserData } from "@/lib/redux/features/userSlice";
+import { useQuery } from "@apollo/client";
+import { GET_USER_BASIC_INFO } from "@/graphql/Queries";
 
 const Sidebar = () => {
     const router = useRouter();
     const pathname = usePathname();
-    const user = useAppSelector((state)=>state.user);
+
+    const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
     const [iconColor, setIconColor] = useState("");
+    const [username, setUsername] = useState("");
+
+    const { data: userData } = useQuery(GET_USER_BASIC_INFO);
+
     const handleLogout = () => {
-        localStorage.removeItem("visionToken")
-        router.push("/auth/login")
-        dispatch(logout())
-    }
+        localStorage.removeItem("visionToken");
+        router.push("/auth/login");
+        dispatch(logout());
+    };
 
     useEffect(() => {
         setIconColor(GetIconColor());
     }, [iconColor]);
+
+    useEffect(() => {
+        if (user.isLogged && userData) {
+            dispatch(
+                setUserData({
+                    name: userData.getCurrentUser.name,
+                    email: userData.getCurrentUser.email,
+                    username: userData.getCurrentUser.username,
+                    profileImageUrl: userData.getCurrentUser.profileImageUrl,
+                    birthDate: userData.getCurrentUser.birthDate,
+                    createdAt: userData.getCurrentUser.createdAt,
+                    updatedAt: userData.getCurrentUser.updated,
+                })
+            );
+            setUsername(userData.getCurrentUser.username);
+        }
+    }, [userData]);
 
     const navItems = [
         {
@@ -73,11 +97,15 @@ const Sidebar = () => {
             icon: (
                 <UserIcon
                     size={25}
-                    color={pathname === "/profile" ? "#374151" : "white"}
+                    color={
+                        pathname === `/profile/${username}`
+                            ? "#374151"
+                            : "white"
+                    }
                 />
             ),
-            to: "/profile",
-            isselected: pathname === "/profile",
+            to: `/profile/${username}`,
+            isselected: pathname === `/profile/${username}`,
         },
         {
             label: "Settings",
@@ -96,9 +124,11 @@ const Sidebar = () => {
         router.push(to);
     };
 
-    if(!user.isLogged){
+    if (!user.isLogged) {
+        router.push("/auth/login");
         return null;
     }
+
     return (
         <div
             id="sidebar"
@@ -126,7 +156,10 @@ const Sidebar = () => {
                     })}
                 </div>
                 <div>
-                    <button className="p-4 border-[1px] border-white rounded-2xl" onClick={handleLogout}>
+                    <button
+                        className="p-4 border-[1px] border-white rounded-2xl"
+                        onClick={handleLogout}
+                    >
                         <LogOut size={20} color="white" />
                     </button>
                 </div>

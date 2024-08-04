@@ -46,6 +46,7 @@ model Idea {
   upvotes       Upvote[]
   upvotesCount  Int       @default(0) @map("upvotes_count")
   comments      Comment[]
+  commentsCount Int       @default(0) @map("comments_count")
   category      String
   tags          String[]
   createdAt     DateTime  @default(now())

@@ -18,6 +18,7 @@ const typeDefs = `#graphql
         images:[Image!]
         videos:[Video!]
         comments:[Comment!]
+        commentsCount:Int!
         category:String!
         tags:[String]
         views:Int!

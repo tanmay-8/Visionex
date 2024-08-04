@@ -4,7 +4,7 @@ const { prismaClient } = require("../lib/db");
 class VideoService {
     async uploadVideo(fileBuffer, fileName, mimetype) {
         try {
-            const result = await uploadFile(fileBuffer,"PostVideos/"+fileName, mimetype);
+            const result = await uploadFile(fileBuffer,"IdeaVideos/"+fileName, mimetype);
             if (result.$metadata.httpStatusCode === 200) {
                 console.log("uploadVideo service ", fileName);
                 return { success: true };
@@ -19,7 +19,7 @@ class VideoService {
 
     async makeUndeletable(key) {
         try {
-            key = "PostVideos/"+key;
+            key = "IdeaVideos/"+key;
             const result = await makeUndeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -34,7 +34,7 @@ class VideoService {
 
     async makeDeletable(key) {
         try {
-            key = "PostVideos/"+key;
+            key = "IdeaVideos/"+key;
             const result = await makeDeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -48,7 +48,7 @@ class VideoService {
     }
     async getSignedUrl(key) {
         try {
-            key = "PostVideos/"+key;
+            key = "IdeaVideos/"+key;
             const url = await getObjectSignedUrl(key);
             return { success: true, url };
         } catch (err) {

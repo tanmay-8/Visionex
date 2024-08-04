@@ -29,7 +29,7 @@ class ImageService {
 
     async makeUndeletable(key) {
         try {
-            key = "PostImages/" + key;
+            key = "IdeaImages/" + key;
             const result = await makeUndeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -44,7 +44,7 @@ class ImageService {
 
     async makeDeletable(key) {
         try {
-            key = "PostImages/" + key;
+            key = "IdeaImages/" + key;
             const result = await makeDeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
