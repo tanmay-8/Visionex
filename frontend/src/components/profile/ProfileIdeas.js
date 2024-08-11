@@ -1,49 +1,47 @@
+import Image from "next/image";
 import React from "react";
 
 const ProfileIdeas = ({ ideas }) => {
     if (!ideas) return <p>Loading...</p>;
     return (
         <div className="p-4">
-            <div className="flex flex-col gap-4">
+            <div className="grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2 gap-10">
                 {ideas.map((idea) => (
                     <div
-                        key={idea.id}
-                        className="w-full bg-light-bg-sec dark:bg-dark-bg-sec rounded-lg p-4"
+                        key={idea._id}
+                        className="bg-gray-100 dark:bg-gray-700 shadow-md rounded-lg aspect-[3/4] relative  space-y-2"
                     >
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                            <div className="w-[150px] h-[150px] bg-gray-100 rounded-lg">
-                                <img
-                                    src={idea.images[0].url}
-                                    alt="idea"
-                                    className="w-full h-full object-cover rounded-lg"
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <h1 className="text-2xl font-semibold">
-                                    {idea.title}
-                                </h1>
-                                <p className="text-gray-500">{idea.description}</p>
-                                <div className="flex gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-main font-semibold">
-                                            {idea.upvotes?.length}
-                                        </span>
-                                        <span className="text-gray-500">Upvotes</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-main font-semibold">
-                                            {idea.comments?.length}
-                                        </span>
-                                        <span className="text-gray-500">Comments</span>
-                                    </div>
-                                </div>
+                        <div className="">
+                            <Image
+                                src={idea.images[0].url}
+                                alt={idea.title}
+                                width={300}
+                                height={300}
+                                className="rounded-t-lg w-auto h-auto"
+                            />
+                        </div>
+
+                        <div className="p-4">
+                            <h2 className="text-lg font-semibold">
+                                {idea.title}
+                            </h2>
+                            <p className="text-sm text-gray-400">
+                                {idea.description}
+                            </p>
+
+                            <div className="flex justify-between items-center">
+                                <p className="text-sm text-gray-400">
+                                    {idea.comments?idea.comments.length:0} comments
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    {idea.upvotes?idea.upvotes.length:0} upvotes
+                                </p>
                             </div>
                         </div>
                     </div>
                 ))}
-
+                
             </div>
-
         </div>
     );
 };

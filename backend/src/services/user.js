@@ -7,6 +7,7 @@ const {
     isValidPassword,
 } = require("../validators/userValidators");
 const { imageService } = require("./image");
+const { makeUndeletable } = require("../lib/s3");
 
 require("dotenv").config();
 
@@ -218,6 +219,7 @@ class UserService {
                 },
             });
 
+            await makeUndeletable("ProfileImages/" + profileImageUrl);
             const user = await prismaClient.user.update({
                 where: {
                     id: decoded.userId,

@@ -24,7 +24,7 @@ const Navbar = () => {
                 <X
                     size={35}
                     color="#419197"
-                    className="cursor-pointer transition-all hover:scale-105 translate-x-[6rem] -translate-y-4"
+                    className="cursor-pointer transition-all hover:scale-105 translate-x-[7rem] -translate-y-4"
                     onClick={() => {
                         toggleMenu();
                     }}

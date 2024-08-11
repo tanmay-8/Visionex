@@ -6,8 +6,8 @@ import ProfileUpvotes from "./ProfileUpvotes";
 
 const Content = ({user}) => {
     return (
-        <div className="w-full min-h-40 bg-light-bg-sec lg:p-2 rounded-lg">
-            {user && <Tabs defaultValue="ideas" className="w-full p-0">
+        <div className="w-full bg-light-bg-sec dark:bg-dark-bg-sec lg:p-2 rounded-lg">
+            {user && <Tabs defaultValue="ideas" className="w-full">
                 <TabsList >
                     <TabsTrigger value="ideas" className="text-lg ">Ideas</TabsTrigger>
                     <TabsTrigger value="comments" className="text-lg">Comments</TabsTrigger>
