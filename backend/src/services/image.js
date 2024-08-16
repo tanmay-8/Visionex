@@ -29,7 +29,6 @@ class ImageService {
 
     async makeUndeletable(key) {
         try {
-            key = "IdeaImages/" + key;
             const result = await makeUndeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -44,7 +43,6 @@ class ImageService {
 
     async makeDeletable(key) {
         try {
-            key = "IdeaImages/" + key;
             const result = await makeDeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -56,9 +54,8 @@ class ImageService {
             return { error: err, success: false };
         }
     }
-    async getSignedUrl(key, folder) {
+    async getSignedUrl(key) {
         try {
-            key = folder + "/" + key;
             const url = await getObjectSignedUrl(key);
             return { success: true, url };
         } catch (err) {
@@ -68,8 +65,8 @@ class ImageService {
     }
     async createImage(input) {
         try {
-            const { fileName, ownerId, ideaId } = input;
-            const result = await this.makeUndeletable(fileName);
+            const { fileName, ownerId, ideaId,folder } = input;
+            const result = await this.makeUndeletable(folder+"/"+fileName);
             if (result.success) {
                 const image = await prismaClient.image.create({
                     data: {

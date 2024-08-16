@@ -15,6 +15,7 @@ const queries = {
 
     getUserProfile: async (_, { username }) => {
         const res = await userService.getUserProfile(username);
+        console.log(res.user.ideas[0].videos)
         if (res.success) {
             return {
                 user: res.user,

@@ -78,13 +78,8 @@ export const GET_USER_PROFILE = gql`
                 ideas {
                     title
                     videos {
-                        description
-                        createdAt
-                        id
                         url
-                        updatedAt
                         name
-                        ideaId
                     }
                     images{
                         name

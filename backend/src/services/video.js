@@ -1,10 +1,19 @@
-const { uploadFile, makeUndeletable, makeDeletable,getObjectSignedUrl } = require("../lib/s3");
+const {
+    uploadFile,
+    makeUndeletable,
+    makeDeletable,
+    getObjectSignedUrl,
+} = require("../lib/s3");
 const { prismaClient } = require("../lib/db");
 
 class VideoService {
-    async uploadVideo(fileBuffer, fileName, mimetype) {
+    async uploadVideo(fileBuffer, folder, fileName, mimetype) {
         try {
-            const result = await uploadFile(fileBuffer,"IdeaVideos/"+fileName, mimetype);
+            const result = await uploadFile(
+                fileBuffer,
+                folder + "/" + fileName,
+                mimetype
+            );
             if (result.$metadata.httpStatusCode === 200) {
                 console.log("uploadVideo service ", fileName);
                 return { success: true };
@@ -19,7 +28,6 @@ class VideoService {
 
     async makeUndeletable(key) {
         try {
-            key = "IdeaVideos/"+key;
             const result = await makeUndeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -34,7 +42,6 @@ class VideoService {
 
     async makeDeletable(key) {
         try {
-            key = "IdeaVideos/"+key;
             const result = await makeDeletable(key);
             if (result.$metadata.httpStatusCode === 200) {
                 return { success: true };
@@ -48,7 +55,6 @@ class VideoService {
     }
     async getSignedUrl(key) {
         try {
-            key = "IdeaVideos/"+key;
             const url = await getObjectSignedUrl(key);
             return { success: true, url };
         } catch (err) {
@@ -57,11 +63,12 @@ class VideoService {
         }
     }
 
-    async createVideo({ fileName, ownerId, ideaId }) {
+    async createVideo({ fileName, ownerId, ideaId,folder }) {
         try {
+            const result = await this.makeUndeletable(folder+"/"+fileName);
             const video = await prismaClient.video.create({
                 data: {
-                    name:fileName,
+                    name: fileName,
                     ownerId,
                     ideaId,
                 },
@@ -71,7 +78,6 @@ class VideoService {
             console.log(err);
             return { error: err, success: false };
         }
-    
     }
 }
 

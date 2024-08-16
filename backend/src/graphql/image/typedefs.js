@@ -1,7 +1,6 @@
 const typeDefs = `#graphql
     type Image{
         id:ID!
-        description:String!
         name:String!
         url:String!
         ideaId:ID!
@@ -11,7 +10,6 @@ const typeDefs = `#graphql
     }
 
     input ImageInput{
-        description:String!
         name:String!
         ideaId:ID!
     }

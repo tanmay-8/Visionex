@@ -52,12 +52,14 @@ class IdeaService {
                 },
             });
 
+
             const ideaId = idea.id;
             if (images && images.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     const image = images[i];
                     const resImg = await imageService.createImage({
                         fileName: image,
+                        folder:"PostImages",
                         ownerId,
                         ideaId,
                     });
@@ -73,6 +75,7 @@ class IdeaService {
                     const video = videos[i];
                     const resVid = await videoService.createVideo({
                         fileName: video,
+                        folder:"PostVideos",
                         ownerId,
                         ideaId,
                     });
@@ -82,6 +85,8 @@ class IdeaService {
                     }
                 }
             }
+
+            console.log(idea);
             return { idea, success: true };
         } catch (err) {
             console.log(err);
@@ -108,22 +113,20 @@ class IdeaService {
                 const idea = ideas[i];
                 const images = idea.images.map(async (image) => {
                     const url = await imageService.getSignedUrl(
-                        image.name,
-                        "PostImages"
+                        "PostImages/" + image.name
                     );
                     image.url = url.url;
                     return image;
                 });
                 const videos = idea.videos.map(async (video) => {
                     const url = await videoService.getSignedUrl(
-                        video.name,
-                        "PostVideos"
+                        "PostVideos/" + video.name
                     );
                     video.url = url.url;
                     return video;
                 });
-                idea.images = images;
-                idea.videos = videos;
+                idea.images = (images && images.length > 0) ? images : [];
+                idea.videos = (videos && videos.length > 0) ? videos : [];
                 idea.isMine =
                     (await userService.getCurrentUser(authtoken)).user.id ===
                     idea.ownerId;
@@ -131,8 +134,7 @@ class IdeaService {
                 if (idea.owner.profileImageUrl) {
                     idea.owner.profileImageUrl = (
                         await imageService.getSignedUrl(
-                            idea.owner.profileImageUrl,
-                            "ProfileImages"
+                            "ProfileImages/" + idea.owner.profileImageUrl
                         )
                     ).url;
                 }

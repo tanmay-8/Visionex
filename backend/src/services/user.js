@@ -135,8 +135,7 @@ class UserService {
 
             if (user.profileImageUrl != null) {
                 const profileImageUrl = await imageService.getSignedUrl(
-                    user.profileImageUrl,
-                    "ProfileImages"
+                    "ProfileImages/" + user.profileImageUrl
                 );
                 user.profileImageUrl = profileImageUrl.url;
             }
@@ -172,8 +171,7 @@ class UserService {
 
             if (user.profileImageUrl != null) {
                 const profileImageUrl = await imageService.getSignedUrl(
-                    user.profileImageUrl,
-                    "ProfileImages"
+                    "ProfileImages/" + user.profileImageUrl
                 );
                 user.profileImageUrl = profileImageUrl.url;
             }
@@ -182,18 +180,24 @@ class UserService {
                 const idea = user.ideas[i];
                 for (let j = 0; j < idea.images.length; j++) {
                     const imageUrl = await imageService.getSignedUrl(
-                        idea.images[j].name,
-                        "PostImages"
+                        "PostImages/" + idea.images[j].name
                     );
                     idea.images[j].url = imageUrl.url;
                     console.log(imageUrl);
                 }
                 for (let j = 0; j < idea.videos.length; j++) {
                     const videoUrl = await imageService.getSignedUrl(
-                        idea.videos[j].name,
-                        "PostVideos"
+                        
+                        "PostVideos/"+idea.videos[j].name,
                     );
-                    idea.videos[j].videoUrl = videoUrl.url;
+                    idea.videos[j].url = videoUrl.url;
+                }
+
+                if(user.ideas[i].images===null){
+                    user.ideas[i].images=[];
+                }
+                if(user.ideas[i].videos===null){
+                    user.ideas[i].videos=[];
                 }
             }
 
@@ -236,7 +240,7 @@ class UserService {
             }
             if (user.profileImageUrl != null) {
                 const url = await imageService.getSignedUrl(
-                    user.profileImageUrl
+                    "ProfileImages/"+user.profileImageUrl
                 );
                 if (url.success) {
                     return { success: true, url: url };

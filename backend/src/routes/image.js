@@ -35,8 +35,9 @@ router.post("/uploadImage", upload.single("photo"), async (req, res) => {
 
 router.post("/makeUndeletable", async (req, res) => {
     try {
-        const { name } = req.body;
-        const result = await imageService.makeUndeletable(name);
+        const { name,folder } = req.body;
+        key = folder + "/" + name;
+        const result = await imageService.makeUndeletable(key);
         res.json(result);
     } catch (error) {
         console.log(error);
@@ -46,8 +47,9 @@ router.post("/makeUndeletable", async (req, res) => {
 
 router.post("/makeDeletable", async (req, res) => {
     try {
-        const { name } = req.body;
-        const result = await imageService.makeDeletable(name);
+        const { name,folder } = req.body;
+        key = folder + "/" + name;
+        const result = await imageService.makeDeletable(key);
         res.json(result);
     } catch (error) {
         console.log(error);

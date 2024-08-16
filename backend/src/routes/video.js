@@ -13,8 +13,10 @@ router.post("/uploadVideo",upload.single('video'),async (req, res) => {
         const fileName = generateRandomString();
         const fileBuffer = file.buffer;
         const mimetype = file.mimetype;
+        const folder = req.body.folder;
         const uploadres = await videoService.uploadVideo(
             fileBuffer,
+            folder,
             fileName,
             mimetype
         );
@@ -32,7 +34,8 @@ router.post("/uploadVideo",upload.single('video'),async (req, res) => {
 
 router.post("/makeUndeletable", async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name,folder } = req.body;
+        key = folder + "/" + name;
         const result = await videoService.makeUndeletable(name);
         res.json(result);
     } catch (error) {

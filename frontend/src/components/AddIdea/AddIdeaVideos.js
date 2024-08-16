@@ -23,6 +23,7 @@ const AddIdeaVideos = () => {
             dispatch(setVideos([curVideo]));
             const data = new FormData();
             data.append("video", video);
+            data.append("folder", "PostVideos");
 
             const res = await fetch("http://localhost:5000/api/video/uploadVideo", {
                 method: "POST",
