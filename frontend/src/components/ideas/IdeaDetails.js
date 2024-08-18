@@ -13,7 +13,7 @@ import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
 import IdeaImg from "@/assets/temp/post.jpg";
-import Comment from "./Comment";
+import Comment from "./Comment/Comment";
 
 const IdeaDetails = () => {
     const theme = useAppSelector((state) => state.theme.theme);

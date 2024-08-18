@@ -19,7 +19,6 @@ export const GET_IDEAS = gql`
             category
             tags
             views
-            upvotesCount
             email
             phone
             linkedin
@@ -27,19 +26,46 @@ export const GET_IDEAS = gql`
             instagram
             createdAt
             updatedAt
-            comments {
-                id
-                text
-                userId
-            }
             owner {
                 username
                 profileImageUrl
             }
-            upvotes {
-                userId
-            }
             isMine
+        }
+    }
+`;
+
+export const GET_UPVOTES_IDEA = gql`
+    query Query($ideaId: ID!) {
+        getUpvotesIdea(ideaId: $ideaId) {
+            success
+            isUpvoted
+            upvotesCount
+        }
+    }
+`;
+
+export const GET_COMMENTS_IDEA = gql`
+    query Query($ideaId: ID!) {
+        getCommentsIdea(ideaId: $ideaId) {
+            comments {
+                id
+                text
+                replies {
+                    id
+                    text
+                    userId
+                    commentId
+                }
+                user{
+                    username
+                    profileImageUrl
+                }
+                ideaId
+                createdAt
+                updatedAt
+            }
+            commentsCount
         }
     }
 `;
@@ -81,7 +107,7 @@ export const GET_USER_PROFILE = gql`
                         url
                         name
                     }
-                    images{
+                    images {
                         name
                         url
                     }

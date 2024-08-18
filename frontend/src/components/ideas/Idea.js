@@ -5,8 +5,9 @@ import Image from "next/image";
 import IdeaImg from "@/assets/temp/post.jpg";
 import { Heart, MessageSquare, MoreHorizontalIcon, Share } from "lucide-react";
 import IdeaDetails from "./IdeaDetails";
-import Comments from "./Comments";
+import Comments from "./Comment/Comments";
 import { getTimeString } from "@/lib/utils/otherUtils";
+import Upvotes from "./Upvotes";
 
 const Idea = ({ idea }) => {
     return (
@@ -48,17 +49,12 @@ const Idea = ({ idea }) => {
                 </div>
                 <div className="flex justify-between pt-6 px-4">
                     <div className="flex space-x-6">
-                        <div className="flex items-center cursor-pointer">
-                            <Heart
-                                size={25}
-                                className="mr-2"
-                                color="rgb(107 114 128)"
-                            />
-                            <p>{idea.upvotes}</p>
-                        </div>
-                        <div>
-                            <Comments />
-                        </div>
+                        <Upvotes ideaId={
+                            idea.id
+                        }/>
+                        <Comments
+                            ideaId={idea.id}
+                        />
                     </div>
                     <div className="">
                         <Share

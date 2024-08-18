@@ -3,7 +3,6 @@ const User = require("./user/index");
 const Idea = require("./idea/index");
 const Image = require("./image/index");
 const Video = require("./video/index");
-const Comment = require("./comment/index");
 
 const createGraphqlServer = async () => {
     const server = new ApolloServer({
@@ -12,7 +11,6 @@ const createGraphqlServer = async () => {
             ${Idea.typeDefs}
             ${Image.typeDefs}
             ${Video.typeDefs}
-            ${Comment.typeDefs}
             type Query {
                 ${User.queries}
                 ${Idea.queries}

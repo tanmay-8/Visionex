@@ -52,14 +52,13 @@ class IdeaService {
                 },
             });
 
-
             const ideaId = idea.id;
             if (images && images.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     const image = images[i];
                     const resImg = await imageService.createImage({
                         fileName: image,
-                        folder:"PostImages",
+                        folder: "PostImages",
                         ownerId,
                         ideaId,
                     });
@@ -75,7 +74,7 @@ class IdeaService {
                     const video = videos[i];
                     const resVid = await videoService.createVideo({
                         fileName: video,
-                        folder:"PostVideos",
+                        folder: "PostVideos",
                         ownerId,
                         ideaId,
                     });
@@ -125,8 +124,8 @@ class IdeaService {
                     video.url = url.url;
                     return video;
                 });
-                idea.images = (images && images.length > 0) ? images : [];
-                idea.videos = (videos && videos.length > 0) ? videos : [];
+                idea.images = images && images.length > 0 ? images : [];
+                idea.videos = videos && videos.length > 0 ? videos : [];
                 idea.isMine =
                     (await userService.getCurrentUser(authtoken)).user.id ===
                     idea.ownerId;
@@ -140,6 +139,176 @@ class IdeaService {
                 }
             }
             return { ideas, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async upvote(input, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+            const { ideaId } = input;
+
+            const idea = await prismaClient.idea.findUnique({
+                where: {
+                    id: ideaId,
+                },
+            });
+
+            if (!idea) {
+                return { error: "Idea not found", success: false };
+            }
+
+            const upvote = await prismaClient.upvote.findFirst({
+                where: {
+                    ideaId,
+                    userId,
+                },
+            });
+
+            if (upvote) {
+                await prismaClient.upvote.delete({
+                    where: {
+                        id: upvote.id,
+                    },
+                });
+
+                await prismaClient.idea.update({
+                    where: {
+                        id: ideaId,
+                    },
+                    data: {
+                        upvotesCount: {
+                            decrement: 1,
+                        },
+                    },
+                });
+                return { success: true };
+            }
+
+            await prismaClient.upvote.create({
+                data: {
+                    ideaId,
+                    userId,
+                },
+            });
+
+            await prismaClient.idea.update({
+                where: {
+                    id: ideaId,
+                },
+                data: {
+                    upvotesCount: {
+                        increment: 1,
+                    },
+                },
+            });
+            return { success: true, message: "Upvoted" };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async getUpvotesIdea(ideaId, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+
+            const upvotes = await prismaClient.upvote.findMany({
+                where: {
+                    ideaId,
+                },
+            });
+
+            const upvotesCount = upvotes.length;
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === userId
+            );
+
+            return {
+                upvotesCount,
+                isUpvoted: isUpvoted,
+                success: true,
+            };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async getCommentsIdea(ideaId, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const comments = await prismaClient.comment.findMany({
+                where: {
+                    ideaId,
+                },
+                include: {
+                    user: true,
+                },
+            });
+
+            for (let i = 0; i < comments.length; i++) {
+                const comment = comments[i];
+                if (comment.user.profileImageUrl) {
+                    comment.user.profileImageUrl = (
+                        await imageService.getSignedUrl(
+                            "ProfileImages/" + comment.user.profileImageUrl
+                        )
+                    ).url;
+                }
+            }
+            const commentsCount = comments.length;
+
+            comments.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            return { comments, commentsCount, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async createComment(input, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+            const { ideaId, text } = input;
+
+            const comment = await prismaClient.comment.create({
+                data: {
+                    ideaId,
+                    userId,
+                    text,
+                },
+            });
+
+            return { comment, success: true };
         } catch (err) {
             console.log(err);
             return { error: err, success: false };

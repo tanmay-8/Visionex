@@ -1,6 +1,7 @@
 import React from 'react'
 
-const ProfileComments = () => {
+const ProfileComments = ({comments}) => {
+  if(!comments) return <p className='p-4'>No content</p>
   return (
     <div>
       

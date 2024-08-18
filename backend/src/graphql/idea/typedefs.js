@@ -7,6 +7,39 @@ const typeDefs = `#graphql
         createdAt:String!
         updatedAt:String!
     }
+    input UpvoteInput{
+        ideaId:ID!
+    }
+    type Comment{
+        id:ID!
+        commentId:ID
+        text:String!
+        userId:ID!
+        ideaId:ID!
+        user:User!
+        idea:Idea!
+        createdAt:String!
+        updatedAt:String!
+        replies:[Comment!]  
+    }
+
+    input CommentInput{
+        text:String!
+        ideaId:ID!
+        commentId:ID
+    }
+    type CommentUpvote{
+        id:ID!
+        userId:ID!
+        commentId:ID!
+        user:User!
+        comment:Comment!
+        createdAt:String!
+        updatedAt:String!
+    }
+    input CommentUpvoteInput{
+        commentId:ID!
+    }
     type Idea{
         id:ID!
         title:String!
@@ -19,6 +52,7 @@ const typeDefs = `#graphql
         videos:[Video!]
         comments:[Comment!]
         commentsCount:Int!
+        commentUpvotes:[CommentUpvote!]
         category:String!
         tags:[String]
         views:Int!
@@ -53,6 +87,26 @@ const typeDefs = `#graphql
         idea:Idea
         success:Boolean
         error:String
+    }
+
+    type GetUpvotesIdeaResponse{
+        isUpvoted:Boolean!
+        upvotesCount:Int!
+        success:Boolean
+        error:String
+    }
+
+    type GetCommentsIdeaResponse{
+        comments:[Comment!]
+        commentsCount:Int!
+        success:Boolean
+        error:String
+    }
+
+    type Response{
+        success:Boolean
+        error:String
+        message:String  
     }
    
 `;

@@ -6,8 +6,8 @@ import ProfileUpvotes from "./ProfileUpvotes";
 
 const Content = ({user}) => {
     return (
-        <div className="w-full bg-light-bg-sec dark:bg-dark-bg-sec lg:p-2 rounded-lg">
-            {user && <Tabs defaultValue="ideas" className="w-full">
+        <div className="w-full h-full bg-light-bg-sec dark:bg-dark-bg-sec lg:p-2 rounded-lg">
+            {user && <Tabs defaultValue="ideas" className="w-full h-full">
                 <TabsList >
                     <TabsTrigger value="ideas" className="text-lg ">Ideas</TabsTrigger>
                     <TabsTrigger value="comments" className="text-lg">Comments</TabsTrigger>
@@ -17,10 +17,10 @@ const Content = ({user}) => {
                     <ProfileIdeas ideas={user.ideas} />
                 </TabsContent>
                 <TabsContent value="comments">
-                    <ProfileComments />
+                    <ProfileComments comments={user.comments}/>
                 </TabsContent>
                 <TabsContent value="upvotes">
-                    <ProfileUpvotes />
+                    <ProfileUpvotes upvotes={user.upvotes}/>
                 </TabsContent>
             </Tabs>}
         </div>

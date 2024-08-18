@@ -76,7 +76,6 @@ export const DELETE_PROFILE_IMAGE = gql`
     }
 `;
 
-
 // Idea Mutations
 export const CREATE_IDEA = gql`
     mutation CreateIdea(
@@ -109,6 +108,26 @@ export const CREATE_IDEA = gql`
                 instagram: $instagram
             }
         ) {
+            success
+            error
+        }
+    }
+`;
+
+export const UPVOTE_IDEA = gql`
+    mutation Upvote($upvoteInput: UpvoteInput!) {
+        upvote(upvoteInput: $upvoteInput) {
+            success
+            message
+            error
+        }
+    }
+`;
+
+export const CREATE_COMMENT = gql`
+    mutation Mutation($commentInput: CommentInput!) {
+        createComment(commentInput: $commentInput) {
+            message
             success
             error
         }

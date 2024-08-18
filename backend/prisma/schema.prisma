@@ -29,6 +29,7 @@ model User {
   images          Image[]
   videos          Video[]
   upvotes         Upvote[]
+  commentUpvotes  CommentUpvote[]
   @@map("users")
 }
 
@@ -61,15 +62,18 @@ model Idea {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
   text      String
-  ideaId    String   @map("idea_id")
-  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  ideaId    String    @map("idea_id")
+  commentId String?   @map("comment_id")
+  idea      Idea      @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentReplies", fields: [commentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  commentUpvotes CommentUpvote[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   @@map("comments")
 }
 
@@ -109,7 +113,7 @@ model Otp {
   @@map("otps")
 }
 
-model Upvote{
+model Upvote {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
   ideaId    String   @map("idea_id")
@@ -117,6 +121,16 @@ model Upvote{
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@map("upvotes")
+}
+
+model CommentUpvote {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  commentId String   @map("comment_id")
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("comment_upvotes")
 }
