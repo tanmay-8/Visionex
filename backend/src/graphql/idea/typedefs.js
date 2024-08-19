@@ -103,6 +103,17 @@ const typeDefs = `#graphql
         error:String
     }
 
+    type GetRepliesCommentResponse{
+        replies:[Comment!]
+        success:Boolean
+        error:String
+    }
+    type GetUpvotesCommentResponse{
+        isUpvoted:Boolean!
+        upvotesCount:Int!
+        success:Boolean
+        error:String
+    }
     type Response{
         success:Boolean
         error:String

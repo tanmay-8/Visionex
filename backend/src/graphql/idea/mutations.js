@@ -10,6 +10,10 @@ const mutations = `#graphql
     createComment(
         commentInput:CommentInput!
     ):Response!
+
+    upvoteComment(
+        commentUpvoteInput:CommentUpvoteInput!
+    ):Response!
 `;
 
 module.exports = { mutations };

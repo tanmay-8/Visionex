@@ -133,3 +133,13 @@ export const CREATE_COMMENT = gql`
         }
     }
 `;
+
+export const UPVOTE_COMMENT = gql`
+    mutation Mutation($commentUpvoteInput: CommentUpvoteInput!) {
+        upvoteComment(commentUpvoteInput: $commentUpvoteInput) {
+            error
+            message
+            success
+        }
+    }
+`;

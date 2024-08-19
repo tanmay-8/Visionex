@@ -57,7 +57,7 @@ export const GET_COMMENTS_IDEA = gql`
                     userId
                     commentId
                 }
-                user{
+                user {
                     username
                     profileImageUrl
                 }
@@ -66,6 +66,35 @@ export const GET_COMMENTS_IDEA = gql`
                 updatedAt
             }
             commentsCount
+        }
+    }
+`;
+
+export const GET_REPLIES_COMMENT = gql`
+    query GetRepliesComment($commentId: ID!) {
+        getRepliesComment(commentId: $commentId) {
+            replies {
+                commentId
+                createdAt
+                id
+                text
+                updatedAt
+                user {
+                    profileImageUrl
+                    username
+                }
+            }
+        }
+    }
+`;
+
+export const GET_UPVOTES_COMMENT = gql`
+    query GetRepliesComment($commentId: ID!) {
+        getUpvotesComment(commentId: $commentId) {
+            error
+            isUpvoted
+            success
+            upvotesCount
         }
     }
 `;

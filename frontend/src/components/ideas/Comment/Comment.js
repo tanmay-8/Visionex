@@ -5,6 +5,8 @@ import { Heart, MessageSquare } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { getTimeString } from "@/lib/utils/otherUtils";
 import { useRouter } from "next/navigation";
+import CommentReplies from "./CommentReplies";
+import CommentUpvotes from "./CommentUpvotes";
 
 const Comment = ({ comment }) => {
     const [iconColor, setIconColor] = useState(GetIconColor());
@@ -30,10 +32,10 @@ const Comment = ({ comment }) => {
                 </div>
             </div>
 
-            <div className="text-sm md:text-base">{comment.text}</div>
-            <div className="flex space-x-4">
-                <Heart size={20} color={iconColor} />
-                <MessageSquare size={20} color={iconColor} />
+            <div className="text-sm md:text-base pl-10">{comment.text}</div>
+            <div className="flex space-x-4 pl-10 items-center relative">
+                <CommentUpvotes commentId={comment.id} />   
+                <CommentReplies commentId={comment.id} iconcolor={iconColor} ideaID={comment.ideaId}/>
             </div>
         </div>
     );

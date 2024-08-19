@@ -260,6 +260,7 @@ class IdeaService {
             const comments = await prismaClient.comment.findMany({
                 where: {
                     ideaId,
+                    commentId: null,
                 },
                 include: {
                     user: true,
@@ -298,10 +299,11 @@ class IdeaService {
             }
 
             const { id: userId } = res.user;
-            const { ideaId, text } = input;
+            const { commentId, ideaId, text } = input;
 
             const comment = await prismaClient.comment.create({
                 data: {
+                    commentId,
                     ideaId,
                     userId,
                     text,
@@ -309,6 +311,173 @@ class IdeaService {
             });
 
             return { comment, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async getRepliesComment(commentId, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const replies = await prismaClient.comment.findMany({
+                where: {
+                    commentId,
+                },
+                include: {
+                    user: true,
+                },
+            });
+
+            for (let i = 0; i < replies.length; i++) {
+                const reply = replies[i];
+                if (reply.user.profileImageUrl) {
+                    reply.user.profileImageUrl = (
+                        await imageService.getSignedUrl(
+                            "ProfileImages/" + reply.user.profileImageUrl
+                        )
+                    ).url;
+                }
+            }
+
+            replies.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            return { replies, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async getCommentUpvotes(commentId, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+
+            const upvotes = await prismaClient.upvote.findMany({
+                where: {
+                    commentId,
+                },
+            });
+
+            const upvotesCount = upvotes.length;
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === userId
+            );
+
+            return {
+                upvotesCount,
+                isUpvoted: isUpvoted,
+                success: true,
+            };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
+    async upvoteComment(input, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+            const { commentId } = input;
+
+            const comment = await prismaClient.comment.findUnique({
+                where: {
+                    id: commentId,
+                },
+            });
+
+            if (!comment) {
+                return { error: "Comment not found", success: false };
+            }
+
+            const upvote = await prismaClient.commentUpvote.findFirst({
+                where: {
+                    commentId,
+                    userId,
+                },
+            });
+
+            if (upvote) {
+                await prismaClient.commentUpvote.delete({
+                    where: {
+                        id: upvote.id,
+                    },
+                });
+                const upvotes = await prismaClient.commentUpvote.findMany({
+                    where: {
+                        commentId,
+                    },
+                });
+                return { success: true, upvotesCount: upvotes.length };
+            }
+
+            await prismaClient.commentUpvote.create({
+                data: {
+                    commentId,
+                    userId,
+                },
+            });
+
+            const upvotes = await prismaClient.commentUpvote.findMany({
+                where: {
+                    commentId,
+                },
+            });
+            return {
+                success: true,
+                message: "Upvoted",
+                upvotesCount: upvotes.length,
+            };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+    async getUpvotesComment(commentId, authtoken) {
+        try {
+            const res = await userService.getCurrentUser(authtoken);
+
+            if (!res.success) {
+                return { error: res.error, success: false };
+            }
+
+            const { id: userId } = res.user;
+
+            const upvotes = await prismaClient.commentUpvote.findMany({
+                where: {
+                    commentId,
+                },
+            });
+
+            const upvotesCount = upvotes.length;
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === userId
+            );
+
+            return {
+                upvotesCount,
+                isUpvoted: isUpvoted,
+                success: true,
+            };
         } catch (err) {
             console.log(err);
             return { error: err, success: false };

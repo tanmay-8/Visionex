@@ -42,6 +42,40 @@ const queries = {
             };
         else return { error: res.error };
     },
+    getRepliesComment: async (_, { commentId }, context) => { 
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+        const res = await ideaService.getRepliesComment(commentId, authToken);
+
+        if (res.success) {
+            return {
+                replies: res.replies,
+                success: true,
+            };
+        } else {
+            return {
+                error: res.error,
+                success: false,
+            };
+        }
+    },
+    getUpvotesComment: async (_, { commentId }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+
+        const res = await ideaService.getUpvotesComment(commentId, authToken);
+        if (res.success)
+            return {
+                isUpvoted: res.isUpvoted,
+                upvotesCount: res.upvotesCount,
+                success: true,
+            };
+        else return { error: res.error };
+    },
 };
 
 const mutations = {
@@ -104,6 +138,26 @@ const mutations = {
                 success: false,
             };
         }
+    },
+
+    upvoteComment: async (_, { commentUpvoteInput }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+        const res = await ideaService.upvoteComment(commentUpvoteInput, authToken);
+
+        if (res.success) {
+            return {
+                success: true,
+                message: res.message,
+            };
+        } else {
+            return {
+                error: res.error,
+                success: false,
+            };
+        }   
     },
 };
 
