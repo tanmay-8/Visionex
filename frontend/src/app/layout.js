@@ -9,15 +9,15 @@ import ApolloAppProvider from "@/components/HOC/ApolloAppProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-    title:"Visionex",
-    description:"Visionex is a platform for sharing ideas and thoughts.",
+    title: "Visionex",
+    description: "Visionex is a platform for sharing ideas and thoughts.",
 };
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <ApolloAppProvider>
-                <StoreProvider>
+            <StoreProvider>
+                <ApolloAppProvider>
                     <body className="">
                         <ThemeProvider>
                             <div className="flex w-full min-h-screen bg-light-bg dark:bg-dark-bg font-main text-gray-800 dark:text-gray-300">
@@ -29,8 +29,8 @@ export default function RootLayout({ children }) {
                             </div>
                         </ThemeProvider>
                     </body>
-                </StoreProvider>
-            </ApolloAppProvider>
+                </ApolloAppProvider>
+            </StoreProvider>
         </html>
     );
 }

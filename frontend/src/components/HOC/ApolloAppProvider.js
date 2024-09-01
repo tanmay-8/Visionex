@@ -6,12 +6,14 @@ import {
     ApolloProvider,
     gql,
 } from "@apollo/client";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const ApolloAppProvider = ({ children }) => {
+    const token = useAppSelector((state) => state.user.authToken);
     const client = new ApolloClient({
         uri: process.env.NEXT_PUBLIC_API_URL + "/graphql",
         headers: {
-            authToken: localStorage.getItem("visionToken") || "",
+            authToken: token || "",
         },
         cache: new InMemoryCache(),
     });

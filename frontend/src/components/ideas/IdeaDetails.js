@@ -22,60 +22,7 @@ const IdeaDetails = () => {
         // setIconColor(GetIconColor());
         setIconColor("rgb(209 213 219)");
     }, []);
-    const comments = [
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !,This is very good idea !,This is very good idea !,This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-        {
-            username: "john_doe",
-            comment: "This is very good idea !",
-        },
-    ];
+
     return (
         <Drawer>
             <DrawerTrigger asChild>
