@@ -168,7 +168,7 @@ const Settings = () => {
                                 src={
                                     user && user.profileImageUrl
                                         ? user.profileImageUrl
-                                        : ""
+                                        : "https://github.com/shadcn.png"
                                 }
                             />
                             <AvatarFallback>CN</AvatarFallback>

@@ -33,7 +33,7 @@ const Profile = ({ params }) => {
                             src={
                                 data.getUserProfile.user.profileImageUrl
                                     ? data.getUserProfile.user.profileImageUrl
-                                    : ""
+                                    : "https://github.com/shadcn.png"
                             }
                             alt="profile"
                             width={150}
