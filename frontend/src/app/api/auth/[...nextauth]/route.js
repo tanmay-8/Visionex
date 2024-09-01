@@ -34,7 +34,9 @@ const handler = NextAuth({
                 if(data && data.token){
                     user.token = data.token;
                 }
-                localStorage.setItem("user", JSON.stringify(user));
+                if(typeof window !== "undefined"){
+                    localStorage.setItem("visionToken", data.token);
+                }
             }
             return true;
         },

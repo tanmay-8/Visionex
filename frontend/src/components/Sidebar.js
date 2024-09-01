@@ -15,7 +15,12 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { logout, setUserData,setLoggedIn,setToken } from "@/lib/redux/features/userSlice";
+import {
+    logout,
+    setUserData,
+    setLoggedIn,
+    setToken,
+} from "@/lib/redux/features/userSlice";
 import { useQuery } from "@apollo/client";
 import { GET_USER_BASIC_INFO } from "@/graphql/Queries";
 import { setTheme } from "@/lib/redux/features/themeSlice";
@@ -33,9 +38,12 @@ const Sidebar = () => {
     const { data: userData } = useQuery(GET_USER_BASIC_INFO);
 
     const handleLogout = () => {
-        localStorage.removeItem("visionToken");
-        router.push("/auth/login");
-        dispatch(logout());
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("visionToken");
+            router.push("/auth/login");
+            dispatch(logout());
+            localStorage.setItem("theme", "light");
+        }
     };
 
     useEffect(() => {
@@ -43,9 +51,9 @@ const Sidebar = () => {
     }, [iconColor]);
 
     useEffect(() => {
-        dispatch(setLoggedIn(
-            localStorage.getItem("visionToken") ? true : false
-        ));
+        dispatch(
+            setLoggedIn(localStorage.getItem("visionToken") ? true : false)
+        );
         dispatch(setToken(localStorage.getItem("visionToken")));
         dispatch(setTheme(localStorage.getItem("theme") || "light"));
         if (user.isLogged && userData) {

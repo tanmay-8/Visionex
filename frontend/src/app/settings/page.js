@@ -44,10 +44,14 @@ const Settings = () => {
     const toggleTheme = () => {
         if (theme.theme === "light") {
             dispatch(setTheme("dark"));
-            localStorage.setItem("theme", "dark");
+            if(typeof window !== "undefined"){
+                localStorage.setItem("theme", "dark");;
+            }
         } else {
             dispatch(setTheme("light"));
-            localStorage.setItem("theme", "light");
+            if(typeof window !== "undefined"){
+                localStorage.setItem("theme", "light");
+            }
         }
     };
     const user = useAppSelector((state) => state.user);
