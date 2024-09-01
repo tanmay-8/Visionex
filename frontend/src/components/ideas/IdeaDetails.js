@@ -163,11 +163,11 @@ const IdeaDetails = () => {
                                     : " text-dark-text"
                             } p-2 h-[65vh] w-[40%] overflow-auto fixed right-4 top-28`}
                         >
-                            {comments.map((comment, index) => {
+                            {/* {comments.map((comment, index) => {
                                 return (
                                     <Comment comment={comment} key={index} />
                                 );
-                            })}
+                            })} */}
                         </div>
                     </div>
                 </div>
