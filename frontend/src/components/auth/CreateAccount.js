@@ -55,7 +55,7 @@ const CreateAccount = () => {
         setLoading(false);
     };
     return (
-        <div className="w-full md:w-1/2 max-w-[700px] px-2 md:px-10 py-10 md:py-20 rounded-3xl">
+        <div className="w-full  max-w-[700px] px-2 md:px-10 py-10 md:py-20 rounded-3xl">
             <h1 className="text-3xl md:text-5xl font-semibold">
                 Create Account
             </h1>

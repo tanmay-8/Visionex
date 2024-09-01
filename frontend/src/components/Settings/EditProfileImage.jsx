@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
