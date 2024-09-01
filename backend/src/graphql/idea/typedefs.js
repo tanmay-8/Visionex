@@ -52,7 +52,6 @@ const typeDefs = `#graphql
         videos:[Video!]
         comments:[Comment!]
         commentsCount:Int!
-        commentUpvotes:[CommentUpvote!]
         category:String!
         tags:[String]
         views:Int!
@@ -96,7 +95,7 @@ const typeDefs = `#graphql
         error:String
     }
 
-    type GetCommentsIdeaResponse{
+    type GetCommentsResponse{
         comments:[Comment!]
         commentsCount:Int!
         success:Boolean

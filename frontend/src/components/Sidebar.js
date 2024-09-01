@@ -125,7 +125,7 @@ const Sidebar = () => {
     };
 
     if (!user.isLogged) {
-        router.push("/auth/login");
+        // router.push("/auth/login");
         return null;
     }
 

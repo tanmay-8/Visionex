@@ -63,7 +63,7 @@ const AddIdeaVideos = () => {
                             key={index}
                         >
                             <video
-                                className="w-full h-full rounded-lg"
+                                className="w-full max-h-[500px] rounded-lg"
                                 controls={true}
                                 autoPlay={true}
                                 loop={true}
@@ -72,7 +72,12 @@ const AddIdeaVideos = () => {
                             </video>{" "}
                             <span
                                 className="cursor-pointer absolute top-[1px] right-[2px] p-1 rounded-full text-gray-100 bg-gray-700"
-                                onClick={() => {}}
+                                onClick={() => {
+                                    const newVideos = curIdea.videos.filter(
+                                        (vid, i) => i !== index
+                                    );
+                                    dispatch(setVideos(newVideos));
+                                }}
                             >
                                 <X className="h-5 w-5" />
                             </span>{" "}

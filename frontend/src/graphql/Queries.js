@@ -6,7 +6,6 @@ export const GET_IDEAS = gql`
             title
             description
             visit
-            collaborators
             ownerId
             images {
                 name
@@ -19,6 +18,48 @@ export const GET_IDEAS = gql`
             category
             tags
             views
+            createdAt
+            updatedAt
+            owner {
+                username
+                profileImageUrl
+            }
+            isMine
+        }
+    }
+`;
+
+export const GET_IDEA = gql`
+    query GetIdea($ideaId: ID!) {
+        getIdea(ideaId: $ideaId) {
+            id
+            title
+            description
+            visit
+            collaborators
+            ownerId
+            owner {
+                name
+                profileImageUrl
+                username
+            }
+            images {
+                url
+                name
+                id
+                ideaId
+            }
+            videos {
+                url
+                name
+                id
+                ideaId
+            }
+            commentsCount
+            category
+            tags
+            views
+            upvotesCount
             email
             phone
             linkedin
@@ -26,10 +67,6 @@ export const GET_IDEAS = gql`
             instagram
             createdAt
             updatedAt
-            owner {
-                username
-                profileImageUrl
-            }
             isMine
         }
     }

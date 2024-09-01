@@ -12,6 +12,16 @@ const queries = {
         if (res.success) return res.ideas;
         else return { error: res.error };
     },
+    getIdea: async (_, { ideaId }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+
+        const res = await ideaService.getIdea(ideaId, authToken);
+        if (res.success) return res.idea;
+        else return { error: res.error };
+    },
     getUpvotesIdea: async (_, { ideaId }, context) => {
         const authToken = context.req.req.headers.authtoken;
         if (!authToken) {
