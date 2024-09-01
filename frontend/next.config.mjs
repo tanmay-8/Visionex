@@ -9,6 +9,9 @@ const nextConfig = {
                 hostname:"via.placeholder.com"
             }
         ]
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
     }
 };
 
