@@ -15,7 +15,7 @@ const Login = () => {
     },[isLogged])
     return (
         <div className="absolute top-0 left-0 w-full md:p-12 p-6 flex justify-center items-center bg-light-bg dark:bg-dark-bg min-h-full">
-            <div className="bg-light-bg-sec dark:bg-dark-bg-sec w-full min-h-[750px] rounded-xl shadow-md lg:w-10/12 md:flex p-4 ">
+            <div className="bg-light-bg-sec dark:bg-dark-bg-sec w-fit min-h-[750px] rounded-xl shadow-md  md:flex p-4 md:min-w-[500px] ">
                 <LoginForm />   
             </div>
         </div>
