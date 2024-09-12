@@ -7,6 +7,8 @@ const nextConfig = {
             },
             {
                 hostname:"via.placeholder.com"
+            },{
+                hostname:"github.com"
             }
         ]
     },

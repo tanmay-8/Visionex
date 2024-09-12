@@ -89,7 +89,10 @@ const LoginForm = () => {
                         />
                     </div>
                     <div className="mt-6 space-y-4 lg:flex justify-between items-center">
-                        <button className="font-medium text-base text-main">
+                        <button onClick={(e)=>{
+                            e.preventDefault();
+                            router.push("/auth/forgotpassword");
+                        }} className="font-medium text-base text-main">
                             Forgot password
                         </button>
                     </div>

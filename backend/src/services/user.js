@@ -298,6 +298,27 @@ class UserService {
         }
     }
 
+    async updatePassword(email,password) {
+        try{
+            const salt = await bcryptjs.genSalt(10);
+            const hashedpassword = await bcryptjs.hash(password, salt);
+
+            const user = await prismaClient.user.update({
+                where:{
+                    email:email
+                },
+                data:{
+                    password:hashedpassword
+                }
+            })
+
+            return {success:true}
+        }catch(err){
+            console.log(err);
+            return {success:false,error:err}
+        }
+    }
+
     async deleteProfileImage(token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);

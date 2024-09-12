@@ -22,7 +22,7 @@ const VerifyMail = () => {
         router.push("/auth/login");
     };
 
-    const verify = async (e) => {
+    const verify = async (e) => { 
         if(code.length<6){
             setErr("Please enter a valid code");
             return;

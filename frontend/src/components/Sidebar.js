@@ -29,6 +29,7 @@ const Sidebar = () => {
     const router = useRouter();
     const pathname = usePathname();
 
+    const [isLogged, setIsLogged] = useState(false);
     const user = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
@@ -54,6 +55,7 @@ const Sidebar = () => {
         dispatch(
             setLoggedIn(localStorage.getItem("visionToken") ? true : false)
         );
+        setIsLogged(localStorage.getItem("visionToken") ? true : false);
         dispatch(setToken(localStorage.getItem("visionToken")));
         dispatch(setTheme(localStorage.getItem("theme") || "light"));
         if (user.isLogged && userData) {
@@ -95,17 +97,17 @@ const Sidebar = () => {
             to: "/explore",
             isselected: pathname === "/explore",
         },
-        {
-            label: "Inbox",
-            icon: (
-                <Mail
-                    size={25}
-                    color={pathname === "/inbox" ? "#374151" : "white"}
-                />
-            ),
-            to: "/inbox",
-            isselected: pathname === "/inbox",
-        },
+        // {
+        //     label: "Inbox",
+        //     icon: (
+        //         <Mail
+        //             size={25}
+        //             color={pathname === "/inbox" ? "#374151" : "white"}
+        //         />
+        //     ),
+        //     to: "/inbox",
+        //     isselected: pathname === "/inbox",
+        // },
         {
             label: "Profile",
             icon: (
@@ -138,48 +140,48 @@ const Sidebar = () => {
         router.push(to);
     };
 
-    if (!user.isLogged) {
+    if (isLogged) {
         // router.push("/auth/login");
-        return null;
+        return (
+            <div
+                id="sidebar"
+                className="flex -translate-x-full md:translate-x-0 h-screen md:flex flex-col py-6 px-10 bg-main dark:bg-dark-bg-sec items-center space-y-32 shadow-sm m-0 mr-5 fixed top-0 left-0 transition-all z-20"
+            >
+                <div>
+                    <Lightbulb size={50} color="white" />
+                </div>
+                <div className="flex flex-col justify-between items-center h-full">
+                    <div className="space-y-6">
+                        {navItems.map((item, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className={`flex p-4 items-center rounded-2xl cursor-pointer ${
+                                        item.isselected
+                                            ? "bg-white scale-110"
+                                            : "bg-white/10 hover:scale-110 hover:bg-white/20  "
+                                    } transition-all`}
+                                    onClick={() => goTo(item.to)}
+                                >
+                                    {item.icon}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div>
+                        <button
+                            className="p-4 border-[1px] border-white rounded-2xl"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={20} color="white" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    return (
-        <div
-            id="sidebar"
-            className="flex -translate-x-full md:translate-x-0 h-screen md:flex flex-col py-6 px-10 bg-main dark:bg-dark-bg-sec items-center space-y-24 shadow-sm m-0 mr-5 fixed top-0 left-0 transition-all z-20"
-        >
-            <div>
-                <Lightbulb size={50} color="white" />
-            </div>
-            <div className="flex flex-col justify-between items-center h-full">
-                <div className="space-y-6">
-                    {navItems.map((item, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className={`flex p-4 items-center rounded-2xl cursor-pointer ${
-                                    item.isselected
-                                        ? "bg-white scale-110"
-                                        : "bg-white/10 hover:scale-110 hover:bg-white/20  "
-                                } transition-all`}
-                                onClick={() => goTo(item.to)}
-                            >
-                                {item.icon}
-                            </div>
-                        );
-                    })}
-                </div>
-                <div>
-                    <button
-                        className="p-4 border-[1px] border-white rounded-2xl"
-                        onClick={handleLogout}
-                    >
-                        <LogOut size={20} color="white" />
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+    return null;
 };
 
 export default Sidebar;
