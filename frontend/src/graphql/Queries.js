@@ -5,8 +5,6 @@ export const GET_IDEAS = gql`
             id
             title
             description
-            visit
-            ownerId
             images {
                 name
                 url

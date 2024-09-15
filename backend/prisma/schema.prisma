@@ -31,7 +31,20 @@ model User {
   videos          Video[]
   upvotes         Upvote[]
   commentUpvotes  CommentUpvote[]
+  followers       Follower[] @relation("FollowerFollowers")
+  following       Follower[] @relation("FollowerFollowing")
   @@map("users")
+}
+
+model Follower {
+  id          String   @id @default(cuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  follower    User     @relation("FollowerFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("FollowerFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map("followers")
 }
 
 model Otp {

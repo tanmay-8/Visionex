@@ -1,4 +1,3 @@
-
 const {
     S3Client,
     PutObjectCommand,
@@ -8,6 +7,7 @@ const {
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const dotenv = require("dotenv");
+const redis = require("./redis");
 
 dotenv.config();
 const bucketName = process.env.S3_BUCKET;
@@ -45,15 +45,18 @@ const deleteFile = (fileName) => {
 };
 
 const getObjectSignedUrl = async (key) => {
+    let url = await redis.get("fileurl:" + key);
+    if (url) {
+        return url;
+    }
     const params = {
         Bucket: bucketName,
         Key: key,
     };
-
     const command = new GetObjectCommand(params);
-    const seconds = 60 * 60 * 24;
-    const url = await getSignedUrl(s3Client, command, { expiresIn: seconds });
-
+    const seconds = 60 * 60;
+    url = await getSignedUrl(s3Client, command, { expiresIn: seconds });
+    await redis.set("fileurl:" + key, url, "EX", seconds);
     return url;
 };
 

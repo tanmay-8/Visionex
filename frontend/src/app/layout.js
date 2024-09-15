@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import ThemeProvider from "@/components/HOC/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import ApolloAppProvider from "@/components/HOC/ApolloAppProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
                                     {children}
                                 </div>
                             </div>
+                            <Toaster/>
                         </ThemeProvider>
                     </body>
                 </ApolloAppProvider>

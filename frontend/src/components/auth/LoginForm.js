@@ -89,12 +89,12 @@ const LoginForm = () => {
                         />
                     </div>
                     <div className="mt-6 space-y-4 lg:flex justify-between items-center">
-                        <button onClick={(e)=>{
+                        <p onClick={(e)=>{
                             e.preventDefault();
                             router.push("/auth/forgotpassword");
-                        }} className="font-medium text-base text-main">
+                        }} className="font-medium text-base text-main cursor-pointer">
                             Forgot password
-                        </button>
+                        </p>
                     </div>
                     {err && (
                         <div className="pt-6 w-full text-center text-base text-red-500">

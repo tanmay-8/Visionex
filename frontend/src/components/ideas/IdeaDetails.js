@@ -1,126 +1,91 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-import {
-    Drawer,
-    DrawerTrigger,
-    DrawerContent,
-    DrawerClose,
-} from "@/components/ui/drawer";
-import { Button } from "../ui/button";
-import UserBanner from "../ui/UserBanner";
+import { Button } from "@/components/ui/button";
+import UserBanner from "@/components/ui/UserBanner";
 import { X } from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 import { useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
 import IdeaImg from "@/assets/temp/post.jpg";
-import Comment from "./Comment/Comment";
 
-const IdeaDetails = () => {
+export default function IdeaDetails() {
     const theme = useAppSelector((state) => state.theme.theme);
     const [iconColor, setIconColor] = useState();
+
     useEffect(() => {
         // setIconColor(GetIconColor());
         setIconColor("rgb(209 213 219)");
     }, []);
 
     return (
-        <Drawer>
-            <DrawerTrigger asChild>
-                <div className="py-2">
-                    <Button className="text-white">Read More</Button>
-                </div>
-            </DrawerTrigger>
-            <DrawerContent
-                className={`border-none ${
-                    theme === "dark" ? "bg-dark-bg-sec" : "bg-light-bg-sec"
-                } font-main`}
-            >
-                <div
-                    className={`h-[80vh] -mt-4 p-4 md:px-8 space-y-4 overflow-y-auto ${
-                        theme === "dark" ? "text-light-text" : "text-dark-text"
-                    }`}
-                >
-                    <div className="flex  py-4 justify-between items-center">
-                        <div className={`flex space-x-3 items-center`}>
-                            <UserBanner size={"md"} />
-                            <div>
-                                <h1 className="text-xl font-semibold">
-                                    John Doe
-                                </h1>
-                                <p>5 min ago</p>
-                            </div>
+        <div
+            className={`min-h-screen ${
+                theme === "dark"
+                    ? "bg-dark-bg-sec text-light-text"
+                    : "bg-light-bg-sec text-dark-text"
+            } font-main rounded-lg`}
+        >
+            <div className="container mx-auto px-4 py-8">
+                <div className="flex justify-between items-center px-4 mb-1">
+                    <div className="flex space-x-3 items-center">
+                        <UserBanner size="md" />
+                        <div>
+                            <h1 className="text-xl font-semibold">John Doe</h1>
+                            <p>5 min ago</p>
                         </div>
-                        <DrawerClose>
-                            <X size={25} color={iconColor} />
-                        </DrawerClose>
                     </div>
+                    <Button variant="ghost" size="icon">
+                        <X size={25} color={iconColor} />
+                    </Button>
+                </div>
 
-                    <div className="px-4 md:px-10 lg:flex lg:space-x-4">
-                        <div className="lg:w-1/2 h-[65vh] space-y-4  overflow-auto fixed md:left-12 top-28 p-3 left-4">
-                            <h1 className="text-2xl font-semibold">
-                                SmartHome Assistant - Revolutionizing Your Home
-                                Experience
-                            </h1>
-                            <div>
-                                <Image
-                                    src={IdeaImg}
-                                    height={500}
-                                    className="rounded-xl mx-auto lg:m-0"
-                                    alt="SmartHome Assistant - Revolutionizing Your Home Experience"
-                                ></Image>
-                            </div>
-                            <div className="py-2 md:pr-4">
-                                <p className="text-xl text-gray-500">
-                                    Introducing SmartHome Assistant, a
-                                    revolutionary AI-powered home automation
-                                    system designed to simplify your life and
-                                    enhance your living experience. Imagine
-                                    having a personal assistant that manages
-                                    your home's appliances, security, and
-                                    entertainment, all from the palm of your
-                                    hand. Introducing SmartHome Assistant, a
-                                    revolutionary AI-powered home automation
-                                    system designed to simplify your life and
-                                    enhance your living experience. Imagine
-                                    having a personal assistant that manages
-                                    your home's appliances, security, and
-                                    entertainment, all from the palm of your
-                                    hand. Introducing SmartHome Assistant, a
-                                    revolutionary AI-powered home automation
-                                    system designed to simplify your life and
-                                    enhance your living experience. Imagine
-                                    having a personal assistant that manages
-                                    your home's appliances, security, and
-                                    entertainment, all from the palm of your
-                                    hand. Introducing SmartHome Assistant, a
-                                    revolutionary AI-powered home automation
-                                    system designed to simplify your life and
-                                    enhance your living experience. Imagine
-                                    having a personal assistant that manages
-                                    your home's appliances, security, and
-                                    entertainment, all from the palm of your
-                                    hand.
-                                </p>
-                            </div>
+                <div className="p-4">
+                    <div className=" space-y-4">
+                        <h1 className="text-3xl font-semibold">
+                            SmartHome Assistant - Revolutionizing Your Home
+                            Experience
+                        </h1>
+                        <div>
+                            <Image
+                                src={IdeaImg}
+                                height={500}
+                                className="rounded-xl w-full"
+                                alt="SmartHome Assistant - Revolutionizing Your Home Experience"
+                            />
                         </div>
-                        <div
-                            className={`hidden lg:block space-y-10 ${
-                                theme === "dark"
-                                    ? " text-light-text"
-                                    : " text-dark-text"
-                            } p-2 h-[65vh] w-[40%] overflow-auto fixed right-4 top-28`}
-                        >
-                            {/* {comments.map((comment, index) => {
-                                return (
-                                    <Comment comment={comment} key={index} />
-                                );
-                            })} */}
+                        <div className="py-4">
+                            <p className="text-xl text-gray-500">
+                                Introducing SmartHome Assistant, a revolutionary
+                                AI-powered home automation system designed to
+                                simplify your life and enhance your living
+                                experience. Imagine having a personal assistant
+                                that manages your home's appliances, security,
+                                and entertainment, all from the palm of your
+                                hand. Introducing SmartHome Assistant, a
+                                revolutionary AI-powered home automation system
+                                designed to simplify your life and enhance your
+                                living experience. Imagine having a personal
+                                assistant that manages your home's appliances,
+                                security, and entertainment, all from the palm
+                                of your hand. Introducing SmartHome Assistant, a
+                                revolutionary AI-powered home automation system
+                                designed to simplify your life and enhance your
+                                living experience. Imagine having a personal
+                                assistant that manages your home's appliances,
+                                security, and entertainment, all from the palm
+                                of your hand. Introducing SmartHome Assistant, a
+                                revolutionary AI-powered home automation system
+                                designed to simplify your life and enhance your
+                                living experience. Imagine having a personal
+                                assistant that manages your home's appliances,
+                                security, and entertainment, all from the palm
+                                of your hand.
+                            </p>
                         </div>
                     </div>
                 </div>
-            </DrawerContent>
-        </Drawer>
+            </div>
+        </div>
     );
-};
-
-export default IdeaDetails;
+}

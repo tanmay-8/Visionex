@@ -41,9 +41,9 @@ const Sidebar = () => {
     const handleLogout = () => {
         if (typeof window !== "undefined") {
             localStorage.removeItem("visionToken");
-            router.push("/auth/login");
             dispatch(logout());
             localStorage.setItem("theme", "light");
+            window.location.reload();
         }
     };
 
@@ -72,6 +72,7 @@ const Sidebar = () => {
             );
             setUsername(userData.getCurrentUser.username);
         }
+       
     }, [userData]);
 
     const navItems = [
