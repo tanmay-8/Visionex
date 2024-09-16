@@ -75,9 +75,9 @@ const EditProfileImage = () => {
     return (
         <Dialog className="border-none font-main ">
             <DialogTrigger>
-                <button className="w-24 py-2 rounded-lg text-white bg-main">
+                <span className="px-8 py-3 rounded-lg text-white bg-main">
                     Edit
-                </button>
+                </span>
             </DialogTrigger>
             <DialogContent
                 className={`max-w-[300px] min-h-[300px]  ${

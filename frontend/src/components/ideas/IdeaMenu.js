@@ -59,7 +59,7 @@ const IdeaMenu = ({idea}) => {
                     </DropdownMenuItem>
 
                     {
-                        idea.isMine &&(
+                        idea?.isMine &&(
                             <DropdownMenuItem>
                                 <Trash
                                     size={25}

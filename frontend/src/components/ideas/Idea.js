@@ -4,9 +4,6 @@ import UserBanner from "../ui/UserBanner";
 import Image from "next/image";
 import {
     CircleCheckBig,
-    Heart,
-    MessageSquare,
-    MoreHorizontalIcon,
     Share,
 } from "lucide-react";
 import Comments from "./Comment/Comments";

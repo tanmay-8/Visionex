@@ -145,6 +145,60 @@ class IdeaService {
         }
     }
 
+    async getIdea(ideaId, authtoken) {
+        try {
+            const idea = await prismaClient.idea.findUnique({
+                where: {
+                    id: ideaId,
+                },
+                include: {
+                    owner: true,
+                    images: true,
+                    videos: true,
+                    comments: true,
+                    upvotes: true,
+                },
+            });
+
+            if (!idea) {
+                return { error: "Idea not found", success: false };
+            }
+
+            const images = idea.images.map(async (image) => {
+                const url = await imageService.getSignedUrl(
+                    "PostImages/" + image.name
+                );
+                image.url = url.url;
+                return image;
+            });
+            const videos = idea.videos.map(async (video) => {
+                const url = await videoService.getSignedUrl(
+                    "PostVideos/" + video.name
+                );
+                video.url = url.url;
+                return video;
+            });
+            idea.images = images && images.length > 0 ? images : [];
+            idea.videos = videos && videos.length > 0 ? videos : [];
+            idea.isMine =
+                (await userService.getCurrentUser(authtoken)).user.id ===
+                idea.ownerId;
+
+            if (idea.owner.profileImageUrl) {
+                idea.owner.profileImageUrl = (
+                    await imageService.getSignedUrl(
+                        "ProfileImages/" + idea.owner.profileImageUrl
+                    )
+                ).url;
+            }
+
+            return { idea, success: true };
+        } catch (err) {
+            console.log(err);
+            return { error: err, success: false };
+        }
+    }
+
     async upvote(input, authtoken) {
         try {
             const res = await userService.getCurrentUser(authtoken);

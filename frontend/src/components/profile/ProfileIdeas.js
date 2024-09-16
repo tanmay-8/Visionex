@@ -10,7 +10,7 @@ const ProfileIdeas = ({ ideas }) => {
                 {ideas.map((idea) => (
                     <div
                         key={idea._id}
-                        className="bg-light-bg dark:bg-dark-bg shadow-sm rounded-md relative  p-2"
+                        className="bg-light-bg dark:bg-dark-bg shadow-sm h-fit rounded-md relative  p-2"
                     >
                         <div className="">
                             <Image
