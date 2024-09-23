@@ -1,16 +1,20 @@
 import { Heart, Share } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-
+import { useRouter } from "next/navigation";
 const ProfileIdeas = ({ ideas }) => {
+    const router = useRouter();
     if (!ideas) return <p>Loading...</p>;
     return (
         <div className="p-4 box-border overflow-y-auto overflow-x-hidden">
             <div className="grid xl:grid-cols-4 lg:grid-cols-3 grid-cols-2 gap-2 h-full">
                 {ideas.map((idea) => (
                     <div
-                        key={idea._id}
-                        className="bg-light-bg dark:bg-dark-bg shadow-sm h-fit rounded-md relative  p-2"
+                        key={idea.id}
+                        className="bg-light-bg dark:bg-dark-bg shadow-sm h-fit rounded-md relative  p-2 cursor-pointer"
+                        onClick={() => {
+                            router.push(`/idea/${idea.id}`);
+                        }}
                     >
                         <div className="">
                             <Image

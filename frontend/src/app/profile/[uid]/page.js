@@ -1,19 +1,37 @@
 "use client";
-import React, { useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER_PROFILE } from "@/graphql/Queries";
 import Image from "next/image";
-import { EllipsisVertical, Menu, MenuIcon, Send, UserPlus } from "lucide-react";
+import {
+    EllipsisVertical,
+    Menu,
+    MenuIcon,
+    Send,
+    UserMinus,
+    UserPlus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Content from "@/components/profile/Content";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { FOLLOW_USER, UNFOLLOW_USER } from "@/graphql/Mutations";
+import { toast } from "sonner";
+import Following from "@/components/profile/Following";
+import Loading from "./loading";
+
 const Profile = ({ params }) => {
     const username = params.uid;
     const { data, loading, error } = useQuery(GET_USER_PROFILE, {
         variables: { username },
     });
+    const [followUser, { loading: followLoading }] = useMutation(FOLLOW_USER);
+    const [unfollowUser, { loading: unfollowLoading }] =
+        useMutation(UNFOLLOW_USER);
 
-    const curusername  = useAppSelector((state) => state.user.username);
+    const [isFollowed, setIsFollowed] = useState(false);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isFollowingOpen, setIsFollowingOpen] = useState(false);
+    const curusername = useAppSelector((state) => state.user.username);
 
     const getTotalUpvotes = (ideas) => {
         let total = 0;
@@ -22,10 +40,26 @@ const Profile = ({ params }) => {
         });
         return total;
     };
+    const handleFollow = async () => {
+        await followUser({ variables: { username } });
+        setIsFollowed(true);
+        toast.success("Followed user");
+    };
+    const handleUnfollow = async () => {
+        await unfollowUser({ variables: { username } });
+        setIsFollowed(false);
+        toast.success("Unfollowed user");
+    };
     useEffect(() => {
         console.log(data);
+        if (data) {
+            setIsFollowed(data.getUserProfile.user.isFollowed);
+            setIsFollowing(data.getUserProfile.user.isFollowing);
+        }
     }, [data]);
-    if (loading || !data) return <p>Loading...</p>;
+        
+
+    if (loading) return <Loading />;
     return (
         <div className="space-y-8 w-full h-full">
             <div className="w-full bg-light-bg-sec  dark:bg-dark-bg-sec rounded-lg relative">
@@ -54,9 +88,20 @@ const Profile = ({ params }) => {
 
                         {data.getUserProfile.user.username !== curusername && (
                             <div className="w-full justify-center lg:w-fit space-x-3 py-3 flex">
-                                <Button className="bg-main text-white py-2 px-4 rounded-lg">
-                                    <UserPlus size={16} className="mr-2" />
-                                    Follow
+                                <Button
+                                    className="bg-main text-white py-2 px-4 rounded-lg"
+                                    onClick={
+                                        isFollowed
+                                            ? handleUnfollow
+                                            : handleFollow
+                                    }
+                                >
+                                    {isFollowed ? (
+                                        <UserMinus size={16} className="mr-2" />
+                                    ) : (
+                                        <UserPlus size={16} className="mr-2" />
+                                    )}
+                                    {isFollowed ? "Unfollow" : "Follow"}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -77,10 +122,20 @@ const Profile = ({ params }) => {
                                 <span className="text-gray-500">Ideas</span>
                             </div>
                             <div className="cursor-pointer">
-                                <span className="text-lg font-semibold pr-2">
-                                    0
-                                </span>
-                                <span className="text-gray-500">Following</span>
+                                <div
+                                    className="cursor-pointer"
+                                    onClick={() => setIsFollowingOpen(true)}
+                                >
+                                    <span className="text-lg font-semibold pr-2">
+                                        {data.getUserProfile.user.following
+                                            ? data.getUserProfile.user.following
+                                                  .length
+                                            : 0}
+                                    </span>
+                                    <span className="text-gray-500">
+                                        Following
+                                    </span>
+                                </div>
                             </div>
                             <div className="cursor-pointer">
                                 <span className="text-lg font-semibold pr-2">
@@ -93,6 +148,12 @@ const Profile = ({ params }) => {
                 </div>
             </div>
             <Content user={data.getUserProfile.user} />
+            <Following
+                isOpen={isFollowingOpen}
+                onClose={() => setIsFollowingOpen(false)}
+                username={username}
+                following={data.getUserProfile.user.following}
+            />
         </div>
     );
 };

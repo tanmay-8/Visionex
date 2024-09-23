@@ -4,6 +4,8 @@ const mutations = `#graphql
     updateProfileImage(profileImageUrl:String!): UpdateProfileImageResponse!
     updateProfile(input:UpdateProfileInput): UpdateProfileResponse!
     deleteProfileImage: DeleteProfileImageResponse!
+    followUser(username: String!): Response!
+    unfollowUser(username: String!): Response!
 `;
 
 module.exports = { mutations };

@@ -76,6 +76,24 @@ export const DELETE_PROFILE_IMAGE = gql`
     }
 `;
 
+export const FOLLOW_USER = gql`
+    mutation FollowUser($username: String!) {
+        followUser(username: $username) {
+            success
+            error
+        }
+    }
+`;
+
+export const UNFOLLOW_USER = gql`
+    mutation UnfollowUser($username: String!) {
+        unfollowUser(username: $username) {
+            success
+            error
+        }
+    }
+`;
+
 // Idea Mutations
 export const CREATE_IDEA = gql`
     mutation CreateIdea(

@@ -166,6 +166,7 @@ export const GET_USER_PROFILE = gql`
                     ideaId
                 }
                 ideas {
+                    id
                     title
                     videos {
                         url
@@ -183,7 +184,27 @@ export const GET_USER_PROFILE = gql`
                     text
                     ideaId
                 }
+                followers {
+                    username
+                    profileImageUrl
+                }
+                following {
+                    username
+                    profileImageUrl
+                }
+                isFollowed
+                isFollowing
+                isSelf
             }
+        }
+    }
+`;
+
+export const GET_FOLLOWING = gql`
+    query GetFollowing($username: String!) {
+        getFollowing(username: $username) {
+            username
+            profileImageUrl
         }
     }
 `;

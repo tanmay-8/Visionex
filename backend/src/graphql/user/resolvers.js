@@ -13,8 +13,12 @@ const queries = {
         else return { error: res.error, __typename: "Error" };
     },
 
-    getUserProfile: async (_, { username }) => {
-        const res = await userService.getUserProfile(username);
+    getUserProfile: async (_, { username }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+        const res = await userService.getUserProfile(username, authToken);
         if (res.success) {
             return {
                 user: res.user,
@@ -90,6 +94,24 @@ const mutations = {
             return { error: "Not authenticated", success: false };
         }
         const res = await userService.deleteProfileImage(authToken);
+        if (res.success) return { success: true };
+        else return { error: res.error, success: false };
+    },
+    followUser: async (_, { username }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.followUser(authToken, username);
+        if (res.success) return { success: true };
+        else return { error: res.error, success: false };
+    },
+    unfollowUser: async (_, { username }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.unfollowUser(authToken, username);
         if (res.success) return { success: true };
         else return { error: res.error, success: false };
     },

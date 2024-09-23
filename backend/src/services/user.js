@@ -150,8 +150,10 @@ class UserService {
         }
     }
 
-    async getUserProfile(username) {
+    async getUserProfile(username, token) {
         try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
             const user = await prismaClient.user.findFirst({
                 where: {
                     username: username,
@@ -166,6 +168,8 @@ class UserService {
                             comments: true,
                         },
                     },
+                    followers: true,
+                    following: true,
                 },
             });
 
@@ -187,20 +191,37 @@ class UserService {
                 }
                 for (let j = 0; j < idea.videos.length; j++) {
                     const videoUrl = await imageService.getSignedUrl(
-                        
-                        "PostVideos/"+idea.videos[j].name,
+                        "PostVideos/" + idea.videos[j].name
                     );
                     idea.videos[j].url = videoUrl.url;
                 }
 
-                if(user.ideas[i].images===null){
-                    user.ideas[i].images=[];
+                if (user.ideas[i].images === null) {
+                    user.ideas[i].images = [];
                 }
-                if(user.ideas[i].videos===null){
-                    user.ideas[i].videos=[];
+                if (user.ideas[i].videos === null) {
+                    user.ideas[i].videos = [];
                 }
             }
 
+            const isFollowed = await prismaClient.follower.findFirst({
+                where: {
+                    followerId: decoded.userId,
+                    followingId: user.id,
+                },
+            });
+            const isFollowing = await prismaClient.follower.findFirst({
+                where: {
+                    followerId: user.id,
+                    followingId: decoded.userId,
+                },
+            });
+            const isSelf = decoded.userId === user.id;
+
+            user.isFollowed = !!isFollowed;
+            user.isFollowing = !!isFollowing;
+            user.isSelf = !!isSelf;
+            
             if (!user) {
                 return { success: false, error: "User not found" };
             }
@@ -240,7 +261,7 @@ class UserService {
             }
             if (user.profileImageUrl != null) {
                 const url = await imageService.getSignedUrl(
-                    "ProfileImages/"+user.profileImageUrl
+                    "ProfileImages/" + user.profileImageUrl
                 );
                 if (url.success) {
                     return { success: true, url: url };
@@ -298,24 +319,24 @@ class UserService {
         }
     }
 
-    async updatePassword(email,password) {
-        try{
+    async updatePassword(email, password) {
+        try {
             const salt = await bcryptjs.genSalt(10);
             const hashedpassword = await bcryptjs.hash(password, salt);
 
             const user = await prismaClient.user.update({
-                where:{
-                    email:email
+                where: {
+                    email: email,
                 },
-                data:{
-                    password:hashedpassword
-                }
-            })
+                data: {
+                    password: hashedpassword,
+                },
+            });
 
-            return {success:true}
-        }catch(err){
+            return { success: true };
+        } catch (err) {
             console.log(err);
-            return {success:false,error:err}
+            return { success: false, error: err };
         }
     }
 
@@ -345,6 +366,86 @@ class UserService {
                 );
                 console.log(res);
             }
+            return { success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+
+    async followUser(token, username) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const follower = await prismaClient.user.findUnique({
+                where: { id: decoded.userId },
+            });
+            const following = await prismaClient.user.findUnique({
+                where: { username: username },
+            });
+
+            if (!follower || !following) {
+                return { success: false, error: "User not found" };
+            }
+
+            if (follower.id === following.id) {
+                return { success: false, error: "Cannot follow yourself" };
+            }
+
+            const existingFollow = await prismaClient.follower.findFirst({
+                where: {
+                    followerId: follower.id,
+                    followingId: following.id,
+                },
+            });
+
+            if (existingFollow) {
+                return { success: false, error: "Already following this user" };
+            }
+
+            await prismaClient.follower.create({
+                data: {
+                    followerId: follower.id,
+                    followingId: following.id,
+                },
+            });
+
+            return { success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+    async unfollowUser(token, username) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const follower = await prismaClient.user.findUnique({
+                where: { id: decoded.userId },
+            });
+            const following = await prismaClient.user.findUnique({
+                where: { username: username },
+            });
+
+            if (!follower || !following) {
+                return { success: false, error: "User not found" };
+            }
+
+            const existingFollow = await prismaClient.follower.findFirst({
+                where: {
+                    followerId: follower.id,
+                    followingId: following.id,
+                },
+            });
+
+            if (!existingFollow) {
+                return { success: false, error: "Not following this user" };
+            }
+
+            await prismaClient.follower.delete({
+                where: {
+                    id: existingFollow.id,
+                },
+            });
+
             return { success: true };
         } catch (err) {
             console.log(err);

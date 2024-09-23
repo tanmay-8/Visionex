@@ -3,7 +3,7 @@ const typeDefs = `#graphql
         id: ID!
         name: String!
         email: String!
-        username: String!
+        username: String
         profileImageUrl: String
         comments: [Comment!]
         ideas: [Idea!]
@@ -11,6 +11,11 @@ const typeDefs = `#graphql
         birthDate: String!
         createdAt: String!
         updatedAt: String!
+        followers: [User!]
+        following: [User!]
+        isFollowed: Boolean!
+        isFollowing: Boolean!
+        isSelf: Boolean!
     }
 
     input UpdateProfileInput {
