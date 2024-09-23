@@ -1,5 +1,5 @@
 import React from "react";
-import Search from "@/components/Home/Search";
+import Search from "@/components/ideas/Search";
 import Ideas from "@/components/ideas/Ideas";
 
 const Explore = () => {

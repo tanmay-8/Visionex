@@ -118,7 +118,20 @@ const typeDefs = `#graphql
         error:String
         message:String  
     }
-   
+    type SearchIdeasResponse{
+        ideas:[Idea!]
+        pagination:Pagination!
+        success:Boolean
+        error:String
+    }
+    type Pagination{
+        currentPage:Int!
+        totalPages:Int!
+        totalCount:Int!
+        hasNextPage:Boolean!
+        hasPreviousPage:Boolean!
+    }
+    
 `;
 
 module.exports = { typeDefs };

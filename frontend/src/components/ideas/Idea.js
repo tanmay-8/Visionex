@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import IdeaMenu from "./IdeaMenu";
 import UserBanner from "../ui/UserBanner";

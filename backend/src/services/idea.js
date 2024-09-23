@@ -16,7 +16,9 @@ class IdeaService {
     async processMediaFiles(files, folder, ownerId, ideaId) {
         const processedFiles = [];
         for (const file of files) {
-            const service = folder.includes("Image") ? imageService : videoService;
+            const service = folder.includes("Image")
+                ? imageService
+                : videoService;
             const result = await service.createMedia({
                 fileName: file,
                 folder,
@@ -32,10 +34,14 @@ class IdeaService {
     }
 
     async getSignedUrls(items, folderPrefix) {
-        return Promise.all(items.map(async (item) => {
-            const url = await imageService.getSignedUrl(`${folderPrefix}/${item.name}`);
-            return { ...item, url: url.url };
-        }));
+        return Promise.all(
+            items.map(async (item) => {
+                const url = await imageService.getSignedUrl(
+                    `${folderPrefix}/${item.name}`
+                );
+                return { ...item, url: url.url };
+            })
+        );
     }
 
     async createIdea(input, authtoken) {
@@ -54,11 +60,21 @@ class IdeaService {
                 });
 
                 if (images && images.length > 0) {
-                    await this.processMediaFiles(images, "PostImages", user.id, idea.id);
+                    await this.processMediaFiles(
+                        images,
+                        "PostImages",
+                        user.id,
+                        idea.id
+                    );
                 }
 
                 if (videos && videos.length > 0) {
-                    await this.processMediaFiles(videos, "PostVideos", user.id, idea.id);
+                    await this.processMediaFiles(
+                        videos,
+                        "PostVideos",
+                        user.id,
+                        idea.id
+                    );
                 }
 
                 return idea;
@@ -85,17 +101,29 @@ class IdeaService {
                 orderBy: { createdAt: "desc" },
             });
 
-            const processedIdeas = await Promise.all(ideas.map(async (idea) => {
-                idea.images = await this.getSignedUrls(idea.images, "PostImages");
-                idea.videos = await this.getSignedUrls(idea.videos, "PostVideos");
-                idea.isMine = user.id === idea.ownerId;
+            const processedIdeas = await Promise.all(
+                ideas.map(async (idea) => {
+                    idea.images = await this.getSignedUrls(
+                        idea.images,
+                        "PostImages"
+                    );
+                    idea.videos = await this.getSignedUrls(
+                        idea.videos,
+                        "PostVideos"
+                    );
+                    idea.isMine = user.id === idea.ownerId;
 
-                if (idea.owner.profileImageUrl) {
-                    idea.owner.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${idea.owner.profileImageUrl}`)).url;
-                }
+                    if (idea.owner.profileImageUrl) {
+                        idea.owner.profileImageUrl = (
+                            await imageService.getSignedUrl(
+                                `ProfileImages/${idea.owner.profileImageUrl}`
+                            )
+                        ).url;
+                    }
 
-                return idea;
-            }));
+                    return idea;
+                })
+            );
 
             return { ideas: processedIdeas, success: true };
         } catch (err) {
@@ -127,7 +155,11 @@ class IdeaService {
             idea.isMine = user.id === idea.ownerId;
 
             if (idea.owner.profileImageUrl) {
-                idea.owner.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${idea.owner.profileImageUrl}`)).url;
+                idea.owner.profileImageUrl = (
+                    await imageService.getSignedUrl(
+                        `ProfileImages/${idea.owner.profileImageUrl}`
+                    )
+                ).url;
             }
 
             return { idea, success: true };
@@ -218,7 +250,9 @@ class IdeaService {
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === user.id
+            );
 
             return { upvotesCount, isUpvoted, success: true };
         } catch (err) {
@@ -238,11 +272,17 @@ class IdeaService {
 
             for (const comment of comments) {
                 if (comment.user.profileImageUrl) {
-                    comment.user.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${comment.user.profileImageUrl}`)).url;
+                    comment.user.profileImageUrl = (
+                        await imageService.getSignedUrl(
+                            `ProfileImages/${comment.user.profileImageUrl}`
+                        )
+                    ).url;
                 }
             }
 
-            comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            comments.sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
 
             return { comments, commentsCount: comments.length, success: true };
         } catch (err) {
@@ -278,11 +318,17 @@ class IdeaService {
 
             for (const reply of replies) {
                 if (reply.user.profileImageUrl) {
-                    reply.user.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${reply.user.profileImageUrl}`)).url;
+                    reply.user.profileImageUrl = (
+                        await imageService.getSignedUrl(
+                            `ProfileImages/${reply.user.profileImageUrl}`
+                        )
+                    ).url;
                 }
             }
 
-            replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            replies.sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
 
             return { replies, success: true };
         } catch (err) {
@@ -300,7 +346,9 @@ class IdeaService {
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === user.id
+            );
 
             return { upvotesCount, isUpvoted, success: true };
         } catch (err) {
@@ -383,9 +431,87 @@ class IdeaService {
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
+            const isUpvoted = upvotes.some(
+                (upvote) => upvote.userId === user.id
+            );
 
             return { upvotesCount, isUpvoted, success: true };
+        } catch (err) {
+            console.error(err);
+            return { error: err.message, success: false };
+        }
+    }
+
+    async searchIdeas(query, page = 1, pageSize = 10, authtoken) {
+        try {
+            const user = await this.handleAuth(authtoken);
+
+            const skip = (page - 1) * pageSize;
+
+            const [ideas, totalCount] = await prismaClient.$transaction([
+                prismaClient.idea.findMany({
+                    where: {
+                        OR: [
+                            { title: { contains: query, mode: "insensitive" } },
+                            { description: { contains: query, mode: "insensitive" } },
+                            { tags: { has: query } },
+                        ],
+                    },
+                    include: {
+                        owner: {
+                            select: {
+                                username: true,
+                                profileImageUrl: true,
+                            },
+                        },
+                        images: true,
+                        videos: true,
+                    },
+                    orderBy: { createdAt: "desc" },
+                    skip,
+                    take: pageSize,
+                }),
+                prismaClient.idea.count({
+                    where: {
+                        OR: [
+                            { title: { contains: query, mode: "insensitive" } },
+                            { description: { contains: query, mode: "insensitive" } },
+                            { tags: { has: query } },
+                        ],
+                    },
+                }),
+            ]);
+
+            const processedIdeas = await Promise.all(
+                ideas.map(async (idea) => {
+                    idea.images = await this.getSignedUrls(idea.images, "PostImages");
+                    idea.videos = await this.getSignedUrls(idea.videos, "PostVideos");
+                    idea.isMine = user.id === idea.ownerId;
+
+                    if (idea.owner.profileImageUrl) {
+                        idea.owner.profileImageUrl = (
+                            await imageService.getSignedUrl(
+                                `ProfileImages/${idea.owner.profileImageUrl}`
+                            )
+                        ).url;
+                    }
+                    return idea;
+                })
+            );
+
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            return {
+                ideas: processedIdeas,
+                pagination: {
+                    currentPage: page,
+                    totalPages,
+                    totalCount,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1,
+                },
+                success: true,
+            };
         } catch (err) {
             console.error(err);
             return { error: err.message, success: false };

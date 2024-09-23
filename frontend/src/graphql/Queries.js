@@ -70,6 +70,45 @@ export const GET_IDEA = gql`
     }
 `;
 
+export const SEARCH_IDEAS = gql`
+    query SearchIdeas($query: String!, $page: Int!, $pageSize: Int!) {
+        searchIdeas(query: $query, page: $page, pageSize: $pageSize) {
+            ideas {
+                id
+                title
+                description
+                images {
+                    url
+                    name
+                }
+                videos {
+                    url
+                    name
+                }
+                category
+                tags
+                views
+                createdAt
+                updatedAt
+                owner {
+                    username
+                    profileImageUrl
+                }
+                isMine
+            }
+            pagination {
+                currentPage
+                totalPages
+                totalCount
+                hasNextPage
+                hasPreviousPage
+            }
+            success
+            error
+        }
+    }
+`;
+
 export const GET_UPVOTES_IDEA = gql`
     query Query($ideaId: ID!) {
         getUpvotesIdea(ideaId: $ideaId) {

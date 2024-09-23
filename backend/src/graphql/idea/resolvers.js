@@ -52,7 +52,7 @@ const queries = {
             };
         else return { error: res.error };
     },
-    getRepliesComment: async (_, { commentId }, context) => { 
+    getRepliesComment: async (_, { commentId }, context) => {
         const authToken = context.req.req.headers.authtoken;
         if (!authToken) {
             return { error: "Not authenticated" };
@@ -84,6 +84,20 @@ const queries = {
                 upvotesCount: res.upvotesCount,
                 success: true,
             };
+        else return { error: res.error };
+    },
+    searchIdeas: async (_, { query, page, pageSize }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+        const res = await ideaService.searchIdeas(
+            query,
+            page,
+            pageSize,
+            authToken
+        );
+        if (res.success) return res;
         else return { error: res.error };
     },
 };
@@ -155,7 +169,10 @@ const mutations = {
         if (!authToken) {
             return { error: "Not authenticated" };
         }
-        const res = await ideaService.upvoteComment(commentUpvoteInput, authToken);
+        const res = await ideaService.upvoteComment(
+            commentUpvoteInput,
+            authToken
+        );
 
         if (res.success) {
             return {
@@ -167,7 +184,7 @@ const mutations = {
                 error: res.error,
                 success: false,
             };
-        }   
+        }
     },
 };
 

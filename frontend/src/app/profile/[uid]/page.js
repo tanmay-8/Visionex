@@ -21,7 +21,7 @@ import Loading from "./loading";
 import Followers from "@/components/profile/Followers";
 
 const Profile = ({ params }) => {
-    const username = params.uid;
+    const username = decodeURIComponent(params.uid);
     const { data, loading, error } = useQuery(GET_USER_PROFILE, {
         variables: { username },
     });

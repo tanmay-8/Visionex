@@ -152,6 +152,7 @@ class UserService {
 
     async getUserProfile(username, token) {
         try {
+            
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             const user = await prismaClient.user.findFirst({
@@ -171,7 +172,7 @@ class UserService {
                 },
             });
 
-            if (user.profileImageUrl != null) {
+            if (user.profileImageUrl) {
                 const profileImageUrl = await imageService.getSignedUrl(
                     "ProfileImages/" + user.profileImageUrl
                 );
