@@ -28,6 +28,27 @@ const queries = {
             return { error: res.error, success: false };
         }
     },
+
+    getFollowing: async (_, { username }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.getFollowing(authToken, username);
+        console.log(res);
+        if (res.success) return res.following;
+        else return [];
+    },
+    getFollowers: async (_, { username }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.getFollowers(authToken, username);
+        console.log(res);   
+        if (res.success) return res.followers;
+        else return [];
+    },
 };
 
 const mutations = {

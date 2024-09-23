@@ -5,96 +5,75 @@ const { userService } = require("./user");
 const { videoService } = require("./video");
 
 class IdeaService {
+    async handleAuth(authtoken) {
+        const res = await userService.getCurrentUser(authtoken);
+        if (!res.success) {
+            throw new Error(res.error);
+        }
+        return res.user;
+    }
+
+    async processMediaFiles(files, folder, ownerId, ideaId) {
+        const processedFiles = [];
+        for (const file of files) {
+            const service = folder.includes("Image") ? imageService : videoService;
+            const result = await service.createMedia({
+                fileName: file,
+                folder,
+                ownerId,
+                ideaId,
+            });
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+            processedFiles.push(result);
+        }
+        return processedFiles;
+    }
+
+    async getSignedUrls(items, folderPrefix) {
+        return Promise.all(items.map(async (item) => {
+            const url = await imageService.getSignedUrl(`${folderPrefix}/${item.name}`);
+            return { ...item, url: url.url };
+        }));
+    }
+
     async createIdea(input, authtoken) {
         try {
+            const user = await this.handleAuth(authtoken);
             const validate = ideaValidator(input);
-
             if (!validate.success) {
                 return { error: validate.errors, success: false };
             }
 
-            const res = await userService.getCurrentUser(authtoken);
+            const { images, videos, ...ideaData } = input;
 
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
-            const { id: ownerId } = res.user;
-            const {
-                title,
-                description,
-                visit,
-                collaborators,
-                category,
-                tags,
-                email,
-                phone,
-                linkedin,
-                twitter,
-                instagram,
-                images,
-                videos,
-            } = input;
+            const result = await prismaClient.$transaction(async (prisma) => {
+                const idea = await prisma.idea.create({
+                    data: { ...ideaData, ownerId: user.id },
+                });
 
-            const idea = await prismaClient.idea.create({
-                data: {
-                    title,
-                    description,
-                    visit,
-                    ownerId,
-                    collaborators,
-                    category,
-                    tags,
-                    email,
-                    phone,
-                    linkedin,
-                    twitter,
-                    instagram,
-                },
+                if (images && images.length > 0) {
+                    await this.processMediaFiles(images, "PostImages", user.id, idea.id);
+                }
+
+                if (videos && videos.length > 0) {
+                    await this.processMediaFiles(videos, "PostVideos", user.id, idea.id);
+                }
+
+                return idea;
             });
 
-            const ideaId = idea.id;
-            if (images && images.length > 0) {
-                for (let i = 0; i < images.length; i++) {
-                    const image = images[i];
-                    const resImg = await imageService.createImage({
-                        fileName: image,
-                        folder: "PostImages",
-                        ownerId,
-                        ideaId,
-                    });
-                    if (!resImg.success) {
-                        prismaClient.idea.delete({ where: { id: ideaId } });
-                        return { error: resImg.error, success: false };
-                    }
-                }
-            }
-
-            if (videos && videos.length > 0) {
-                for (let i = 0; i < videos.length; i++) {
-                    const video = videos[i];
-                    const resVid = await videoService.createVideo({
-                        fileName: video,
-                        folder: "PostVideos",
-                        ownerId,
-                        ideaId,
-                    });
-                    if (!resVid.success) {
-                        prismaClient.idea.delete({ where: { id: ideaId } });
-                        return { error: resVid.error, success: false };
-                    }
-                }
-            }
-
-            console.log(idea);
-            return { idea, success: true };
+            return { idea: result, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async getIdeas(authtoken) {
         try {
+            const user = await this.handleAuth(authtoken);
             const ideas = await prismaClient.idea.findMany({
                 include: {
                     owner: true,
@@ -103,54 +82,33 @@ class IdeaService {
                     comments: true,
                     upvotes: true,
                 },
-                orderBy: {
-                    createdAt: "desc",
-                },
+                orderBy: { createdAt: "desc" },
             });
 
-            for (let i = 0; i < ideas.length; i++) {
-                const idea = ideas[i];
-                const images = idea.images.map(async (image) => {
-                    const url = await imageService.getSignedUrl(
-                        "PostImages/" + image.name
-                    );
-                    image.url = url.url;
-                    return image;
-                });
-                const videos = idea.videos.map(async (video) => {
-                    const url = await videoService.getSignedUrl(
-                        "PostVideos/" + video.name
-                    );
-                    video.url = url.url;
-                    return video;
-                });
-                idea.images = images && images.length > 0 ? images : [];
-                idea.videos = videos && videos.length > 0 ? videos : [];
-                idea.isMine =
-                    (await userService.getCurrentUser(authtoken)).user.id ===
-                    idea.ownerId;
+            const processedIdeas = await Promise.all(ideas.map(async (idea) => {
+                idea.images = await this.getSignedUrls(idea.images, "PostImages");
+                idea.videos = await this.getSignedUrls(idea.videos, "PostVideos");
+                idea.isMine = user.id === idea.ownerId;
 
                 if (idea.owner.profileImageUrl) {
-                    idea.owner.profileImageUrl = (
-                        await imageService.getSignedUrl(
-                            "ProfileImages/" + idea.owner.profileImageUrl
-                        )
-                    ).url;
+                    idea.owner.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${idea.owner.profileImageUrl}`)).url;
                 }
-            }
-            return { ideas, success: true };
+
+                return idea;
+            }));
+
+            return { ideas: processedIdeas, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async getIdea(ideaId, authtoken) {
         try {
+            const user = await this.handleAuth(authtoken);
             const idea = await prismaClient.idea.findUnique({
-                where: {
-                    id: ideaId,
-                },
+                where: { id: ideaId },
                 include: {
                     owner: true,
                     images: true,
@@ -164,38 +122,18 @@ class IdeaService {
                 return { error: "Idea not found", success: false };
             }
 
-            const images = idea.images.map(async (image) => {
-                const url = await imageService.getSignedUrl(
-                    "PostImages/" + image.name
-                );
-                image.url = url.url;
-                return image;
-            });
-            const videos = idea.videos.map(async (video) => {
-                const url = await videoService.getSignedUrl(
-                    "PostVideos/" + video.name
-                );
-                video.url = url.url;
-                return video;
-            });
-            idea.images = images && images.length > 0 ? images : [];
-            idea.videos = videos && videos.length > 0 ? videos : [];
-            idea.isMine =
-                (await userService.getCurrentUser(authtoken)).user.id ===
-                idea.ownerId;
+            idea.images = await this.getSignedUrls(idea.images, "PostImages");
+            idea.videos = await this.getSignedUrls(idea.videos, "PostVideos");
+            idea.isMine = user.id === idea.ownerId;
 
             if (idea.owner.profileImageUrl) {
-                idea.owner.profileImageUrl = (
-                    await imageService.getSignedUrl(
-                        "ProfileImages/" + idea.owner.profileImageUrl
-                    )
-                ).url;
+                idea.owner.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${idea.owner.profileImageUrl}`)).url;
             }
 
             return { idea, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
@@ -273,172 +211,101 @@ class IdeaService {
 
     async getUpvotesIdea(ideaId, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
-
-            const { id: userId } = res.user;
+            const user = await this.handleAuth(authtoken);
 
             const upvotes = await prismaClient.upvote.findMany({
-                where: {
-                    ideaId,
-                },
+                where: { ideaId },
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(
-                (upvote) => upvote.userId === userId
-            );
+            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
 
-            return {
-                upvotesCount,
-                isUpvoted: isUpvoted,
-                success: true,
-            };
+            return { upvotesCount, isUpvoted, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async getCommentsIdea(ideaId, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
+            await this.handleAuth(authtoken);
 
             const comments = await prismaClient.comment.findMany({
-                where: {
-                    ideaId,
-                    commentId: null,
-                },
-                include: {
-                    user: true,
-                },
+                where: { ideaId, commentId: null },
+                include: { user: true },
             });
 
-            for (let i = 0; i < comments.length; i++) {
-                const comment = comments[i];
+            for (const comment of comments) {
                 if (comment.user.profileImageUrl) {
-                    comment.user.profileImageUrl = (
-                        await imageService.getSignedUrl(
-                            "ProfileImages/" + comment.user.profileImageUrl
-                        )
-                    ).url;
+                    comment.user.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${comment.user.profileImageUrl}`)).url;
                 }
             }
-            const commentsCount = comments.length;
 
-            comments.sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
+            comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            return { comments, commentsCount, success: true };
+            return { comments, commentsCount: comments.length, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async createComment(input, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
-
-            const { id: userId } = res.user;
+            const user = await this.handleAuth(authtoken);
             const { commentId, ideaId, text } = input;
 
             const comment = await prismaClient.comment.create({
-                data: {
-                    commentId,
-                    ideaId,
-                    userId,
-                    text,
-                },
+                data: { commentId, ideaId, userId: user.id, text },
             });
 
             return { comment, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async getRepliesComment(commentId, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
+            await this.handleAuth(authtoken);
 
             const replies = await prismaClient.comment.findMany({
-                where: {
-                    commentId,
-                },
-                include: {
-                    user: true,
-                },
+                where: { commentId },
+                include: { user: true },
             });
 
-            for (let i = 0; i < replies.length; i++) {
-                const reply = replies[i];
+            for (const reply of replies) {
                 if (reply.user.profileImageUrl) {
-                    reply.user.profileImageUrl = (
-                        await imageService.getSignedUrl(
-                            "ProfileImages/" + reply.user.profileImageUrl
-                        )
-                    ).url;
+                    reply.user.profileImageUrl = (await imageService.getSignedUrl(`ProfileImages/${reply.user.profileImageUrl}`)).url;
                 }
             }
 
-            replies.sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
+            replies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             return { replies, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
     async getCommentUpvotes(commentId, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
-
-            const { id: userId } = res.user;
+            const user = await this.handleAuth(authtoken);
 
             const upvotes = await prismaClient.upvote.findMany({
-                where: {
-                    commentId,
-                },
+                where: { commentId },
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(
-                (upvote) => upvote.userId === userId
-            );
+            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
 
-            return {
-                upvotesCount,
-                isUpvoted: isUpvoted,
-                success: true,
-            };
+            return { upvotesCount, isUpvoted, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 
@@ -506,35 +373,22 @@ class IdeaService {
             return { error: err, success: false };
         }
     }
+
     async getUpvotesComment(commentId, authtoken) {
         try {
-            const res = await userService.getCurrentUser(authtoken);
-
-            if (!res.success) {
-                return { error: res.error, success: false };
-            }
-
-            const { id: userId } = res.user;
+            const user = await this.handleAuth(authtoken);
 
             const upvotes = await prismaClient.commentUpvote.findMany({
-                where: {
-                    commentId,
-                },
+                where: { commentId },
             });
 
             const upvotesCount = upvotes.length;
-            const isUpvoted = upvotes.some(
-                (upvote) => upvote.userId === userId
-            );
+            const isUpvoted = upvotes.some(upvote => upvote.userId === user.id);
 
-            return {
-                upvotesCount,
-                isUpvoted: isUpvoted,
-                success: true,
-            };
+            return { upvotesCount, isUpvoted, success: true };
         } catch (err) {
-            console.log(err);
-            return { error: err, success: false };
+            console.error(err);
+            return { error: err.message, success: false };
         }
     }
 }

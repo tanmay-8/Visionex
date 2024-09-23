@@ -22,7 +22,9 @@ const ProfileIdeas = ({ ideas }) => {
                                 alt={idea.title}
                                 width={300}
                                 height={300}
-                                className="rounded-md w-auto h-auto"
+                                className="rounded-md object-cover transition-opacity duration-300"
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                             />
                         </div>
 

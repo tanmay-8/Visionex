@@ -168,8 +168,6 @@ class UserService {
                             comments: true,
                         },
                     },
-                    followers: true,
-                    following: true,
                 },
             });
 
@@ -230,6 +228,13 @@ class UserService {
             console.log(err);
             return { success: false, error: err };
         }
+    }
+
+    async getProfileImageUrl(key) {
+        const url = await imageService.getSignedUrl(
+            "ProfileImages/" + key
+        );
+        return url.url;
     }
 
     async updateProfileImage(profileImageUrl, token) {
@@ -447,6 +452,68 @@ class UserService {
             });
 
             return { success: true };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+    async getFollowing(token, username) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await prismaClient.user.findUnique({
+                where: { username: username },
+            });
+            if (!user) {
+                return { success: false, error: "User not found" };
+            }
+            const following = await prismaClient.follower.findMany({
+                where: {
+                    followerId: user.id,
+                },
+            });
+            const followingUsers = await prismaClient.user.findMany({
+                where: {
+                    id: {
+                        in: following.map((following) => following.followingId),
+                    },
+                },
+            });
+            for (let i = 0; i < followingUsers.length; i++) {
+                const profileImageUrl = await this.getProfileImageUrl(followingUsers[i].profileImageUrl);
+                followingUsers[i].profileImageUrl = profileImageUrl;
+            }
+            return { success: true, following: followingUsers };
+        } catch (err) {
+            console.log(err);
+            return { success: false, error: err };
+        }
+    }
+    async getFollowers(token, username) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await prismaClient.user.findUnique({
+                where: { username: username },
+            });
+            if (!user) {
+                return { success: false, error: "User not found" };
+            }
+            const followers = await prismaClient.follower.findMany({
+                where: {
+                    followingId: user.id,
+                },
+            });
+            const followerUsers = await prismaClient.user.findMany({
+                where: {
+                    id: {
+                        in: followers.map((follower) => follower.followerId),
+                    },
+                },
+            });
+            for (let i = 0; i < followerUsers.length; i++) {
+                const profileImageUrl = await this.getProfileImageUrl(followerUsers[i].profileImageUrl);
+                followerUsers[i].profileImageUrl = profileImageUrl;
+            }
+            return { success: true, followers: followerUsers};
         } catch (err) {
             console.log(err);
             return { success: false, error: err };

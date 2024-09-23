@@ -208,3 +208,12 @@ export const GET_FOLLOWING = gql`
         }
     }
 `;
+
+export const GET_FOLLOWERS = gql`
+    query GetFollowers($username: String!) {
+        getFollowers(username: $username) {
+            username
+            profileImageUrl
+        }
+    }
+`;

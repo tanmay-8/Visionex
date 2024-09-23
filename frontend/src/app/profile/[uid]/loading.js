@@ -36,7 +36,7 @@ const Loading = () => {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="w-full bg-light-bg-sec dark:bg-dark-bg-sec rounded-lg relative">
                 <CardContent className="p-6">
                     <Skeleton className="h-4 w-full mb-4" />
                     <Skeleton className="h-4 w-3/4 mb-4" />

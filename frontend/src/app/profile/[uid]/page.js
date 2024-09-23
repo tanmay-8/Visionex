@@ -18,6 +18,7 @@ import { FOLLOW_USER, UNFOLLOW_USER } from "@/graphql/Mutations";
 import { toast } from "sonner";
 import Following from "@/components/profile/Following";
 import Loading from "./loading";
+import Followers from "@/components/profile/Followers";
 
 const Profile = ({ params }) => {
     const username = params.uid;
@@ -31,6 +32,7 @@ const Profile = ({ params }) => {
     const [isFollowed, setIsFollowed] = useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
     const [isFollowingOpen, setIsFollowingOpen] = useState(false);
+    const [isFollowersOpen, setIsFollowersOpen] = useState(false);
     const curusername = useAppSelector((state) => state.user.username);
 
     const getTotalUpvotes = (ideas) => {
@@ -57,7 +59,6 @@ const Profile = ({ params }) => {
             setIsFollowing(data.getUserProfile.user.isFollowing);
         }
     }, [data]);
-        
 
     if (loading) return <Loading />;
     return (
@@ -122,38 +123,16 @@ const Profile = ({ params }) => {
                                 <span className="text-gray-500">Ideas</span>
                             </div>
                             <div className="cursor-pointer">
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={() => setIsFollowingOpen(true)}
-                                >
-                                    <span className="text-lg font-semibold pr-2">
-                                        {data.getUserProfile.user.following
-                                            ? data.getUserProfile.user.following
-                                                  .length
-                                            : 0}
-                                    </span>
-                                    <span className="text-gray-500">
-                                        Following
-                                    </span>
-                                </div>
+                                <Following username={username} />
                             </div>
                             <div className="cursor-pointer">
-                                <span className="text-lg font-semibold pr-2">
-                                    0
-                                </span>
-                                <span className="text-gray-500">Followers</span>
+                                <Followers username={username} />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <Content user={data.getUserProfile.user} />
-            <Following
-                isOpen={isFollowingOpen}
-                onClose={() => setIsFollowingOpen(false)}
-                username={username}
-                following={data.getUserProfile.user.following}
-            />
         </div>
     );
 };
