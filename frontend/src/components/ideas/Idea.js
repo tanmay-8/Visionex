@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IdeaMenu from "./IdeaMenu";
 import UserBanner from "../ui/UserBanner";
 import Image from "next/image";
@@ -16,6 +16,11 @@ import { toast } from "sonner";
 
 const Idea = ({ idea }) => {
     const router = useRouter();
+    const [isMine, setIsMine] = useState(false);
+
+    useEffect(() => {
+        setIsMine(idea.isMine);
+    }, [idea]);
     return (
         <div className="flex flex-col p-4 md:p-6 space-y-3  bg-light-bg-sec dark:bg-dark-bg-sec rounded-xl shadow-sm w-full min-h-72">
             <div className="flex justify-between items-center">
@@ -34,7 +39,7 @@ const Idea = ({ idea }) => {
                     </div>
                 </div>
                 <div>
-                    <IdeaMenu idea={idea} />
+                    <IdeaMenu isMine={idea.isMine} />
                 </div>
             </div>
             <div>

@@ -1,28 +1,40 @@
 import { gql } from "@apollo/client";
+
 export const GET_IDEAS = gql`
-    query Query {
-        getIdeas {
-            id
-            title
-            description
-            images {
-                name
-                url
+    query GetIdeas($query: String, $page: Int!, $pageSize: Int!) {
+        getIdeas(query: $query, page: $page, pageSize: $pageSize) {
+            ideas {
+                id
+                title
+                description
+                images {
+                    name
+                    url
+                }
+                videos {
+                    name
+                    url
+                }
+                category
+                tags
+                views
+                createdAt
+                updatedAt
+                owner {
+                    username
+                    profileImageUrl
+                }
+                isMine
             }
-            videos {
-                name
-                url
+            pagination {
+                currentPage
+                totalPages
+                totalCount
+                hasNextPage
+                hasPreviousPage
             }
-            category
-            tags
-            views
-            createdAt
-            updatedAt
-            owner {
-                username
-                profileImageUrl
-            }
-            isMine
+            success
+            error
         }
     }
 `;

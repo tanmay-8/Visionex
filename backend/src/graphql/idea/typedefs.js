@@ -118,7 +118,7 @@ const typeDefs = `#graphql
         error:String
         message:String  
     }
-    type SearchIdeasResponse{
+    type IdeasResponse{
         ideas:[Idea!]
         pagination:Pagination!
         success:Boolean

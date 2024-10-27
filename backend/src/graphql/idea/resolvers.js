@@ -1,15 +1,19 @@
 const { ideaService } = require("../../services/idea");
 
 const queries = {
-    getIdeas: async (_, __, context) => {
+    getIdeas: async (_, { query, page, pageSize }, context) => {
         const authToken = context.req.req.headers.authtoken;
         if (!authToken) {
             return { error: "Not authenticated" };
         }
 
-        const res = await ideaService.getIdeas(authToken);
-        console.log(res.ideas);
-        if (res.success) return res.ideas;
+        const res = await ideaService.getIdeas(
+            authToken,
+            query,
+            page,
+            pageSize
+        );
+        if (res.success) return res;
         else return { error: res.error };
     },
     getIdea: async (_, { ideaId }, context) => {
@@ -84,20 +88,6 @@ const queries = {
                 upvotesCount: res.upvotesCount,
                 success: true,
             };
-        else return { error: res.error };
-    },
-    searchIdeas: async (_, { query, page, pageSize }, context) => {
-        const authToken = context.req.req.headers.authtoken;
-        if (!authToken) {
-            return { error: "Not authenticated" };
-        }
-        const res = await ideaService.searchIdeas(
-            query,
-            page,
-            pageSize,
-            authToken
-        );
-        if (res.success) return res;
         else return { error: res.error };
     },
 };

@@ -86,20 +86,55 @@ class IdeaService {
             return { error: err.message, success: false };
         }
     }
-
-    async getIdeas(authtoken) {
+    async getIdeas(authtoken, query = "", page = 1, pageSize = 10) {
         try {
             const user = await this.handleAuth(authtoken);
-            const ideas = await prismaClient.idea.findMany({
-                include: {
-                    owner: true,
-                    images: true,
-                    videos: true,
-                    comments: true,
-                    upvotes: true,
-                },
-                orderBy: { createdAt: "desc" },
-            });
+
+            const skip = (page - 1) * pageSize;
+
+            const [ideas, totalCount] = await prismaClient.$transaction([
+                prismaClient.idea.findMany({
+                    where: {
+                        OR: [
+                            { title: { contains: query, mode: "insensitive" } },
+                            {
+                                description: {
+                                    contains: query,
+                                    mode: "insensitive",
+                                },
+                            },
+                            { tags: { has: query } },
+                        ],
+                    },
+                    include: {
+                        owner: {
+                            select: {
+                                username: true,
+                                profileImageUrl: true,
+                            },
+                        },
+                        images: true,
+                        videos: true,
+                    },
+                    orderBy: { createdAt: "desc" },
+                    skip,
+                    take: pageSize,
+                }),
+                prismaClient.idea.count({
+                    where: {
+                        OR: [
+                            { title: { contains: query, mode: "insensitive" } },
+                            {
+                                description: {
+                                    contains: query,
+                                    mode: "insensitive",
+                                },
+                            },
+                            { tags: { has: query } },
+                        ],
+                    },
+                }),
+            ]);
 
             const processedIdeas = await Promise.all(
                 ideas.map(async (idea) => {
@@ -120,12 +155,23 @@ class IdeaService {
                             )
                         ).url;
                     }
-
                     return idea;
                 })
             );
 
-            return { ideas: processedIdeas, success: true };
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            return {
+                ideas: processedIdeas,
+                pagination: {
+                    currentPage: page,
+                    totalPages,
+                    totalCount,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1,
+                },
+                success: true,
+            };
         } catch (err) {
             console.error(err);
             return { error: err.message, success: false };
@@ -436,82 +482,6 @@ class IdeaService {
             );
 
             return { upvotesCount, isUpvoted, success: true };
-        } catch (err) {
-            console.error(err);
-            return { error: err.message, success: false };
-        }
-    }
-
-    async searchIdeas(query, page = 1, pageSize = 10, authtoken) {
-        try {
-            const user = await this.handleAuth(authtoken);
-
-            const skip = (page - 1) * pageSize;
-
-            const [ideas, totalCount] = await prismaClient.$transaction([
-                prismaClient.idea.findMany({
-                    where: {
-                        OR: [
-                            { title: { contains: query, mode: "insensitive" } },
-                            { description: { contains: query, mode: "insensitive" } },
-                            { tags: { has: query } },
-                        ],
-                    },
-                    include: {
-                        owner: {
-                            select: {
-                                username: true,
-                                profileImageUrl: true,
-                            },
-                        },
-                        images: true,
-                        videos: true,
-                    },
-                    orderBy: { createdAt: "desc" },
-                    skip,
-                    take: pageSize,
-                }),
-                prismaClient.idea.count({
-                    where: {
-                        OR: [
-                            { title: { contains: query, mode: "insensitive" } },
-                            { description: { contains: query, mode: "insensitive" } },
-                            { tags: { has: query } },
-                        ],
-                    },
-                }),
-            ]);
-
-            const processedIdeas = await Promise.all(
-                ideas.map(async (idea) => {
-                    idea.images = await this.getSignedUrls(idea.images, "PostImages");
-                    idea.videos = await this.getSignedUrls(idea.videos, "PostVideos");
-                    idea.isMine = user.id === idea.ownerId;
-
-                    if (idea.owner.profileImageUrl) {
-                        idea.owner.profileImageUrl = (
-                            await imageService.getSignedUrl(
-                                `ProfileImages/${idea.owner.profileImageUrl}`
-                            )
-                        ).url;
-                    }
-                    return idea;
-                })
-            );
-
-            const totalPages = Math.ceil(totalCount / pageSize);
-
-            return {
-                ideas: processedIdeas,
-                pagination: {
-                    currentPage: page,
-                    totalPages,
-                    totalCount,
-                    hasNextPage: page < totalPages,
-                    hasPreviousPage: page > 1,
-                },
-                success: true,
-            };
         } catch (err) {
             console.error(err);
             return { error: err.message, success: false };

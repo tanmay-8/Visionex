@@ -27,7 +27,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
 
     return (
         <nav
-            className="flex items-center justify-center space-x-2 w-full lg:w-3/4 xl:w-2/3 "
+            className="flex items-center justify-center space-x-2 w-full "
             aria-label="Pagination"
         >
             <Button

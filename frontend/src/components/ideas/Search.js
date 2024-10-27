@@ -31,7 +31,7 @@ const Search = ({ query }) => {
                         if (search === "") {
                             router.push(`/explore`);
                         } else {
-                            router.push(`/explore/search?query=${search}`);
+                            router.push(`/explore?query=${search}`);
                         }
                     }
                 }}
@@ -48,7 +48,7 @@ const Search = ({ query }) => {
                     if (search === "") {
                         router.push(`/explore`);
                     } else {
-                        router.push(`/explore/search?query=${search}`);
+                        router.push(`/explore?query=${search}`);
                     }
                 }}
             />

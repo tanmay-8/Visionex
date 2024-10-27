@@ -6,13 +6,13 @@ const createGraphqlServer = require("./src/graphql");
 require("dotenv").config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.BACKEND_PORT) || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+    res.send("Hello World , This is Visionex !");
 });
 app.use("/api/video",require("./src/routes/video"))
 app.use("/api/image",require("./src/routes/image"))

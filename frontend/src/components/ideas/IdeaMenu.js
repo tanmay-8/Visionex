@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import {
     DropdownMenu,
@@ -8,13 +8,24 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bookmark, Delete, DeleteIcon, EllipsisVertical, EyeOff, Link2, Menu, ShieldAlert, Trash } from "lucide-react";
+import {
+    Bookmark,
+    Delete,
+    DeleteIcon,
+    EllipsisVertical,
+    EyeOff,
+    Link2,
+    Menu,
+    ShieldAlert,
+    Trash,
+} from "lucide-react";
 import GetIconColor from "@/lib/utils/GetIconColor";
 
-const IdeaMenu = ({idea}) => {
+const IdeaMenu = ({ isMine }) => {
     const [iconColor, setIconColor] = useState("#374151");
 
     useEffect(() => {
+        console.log(isMine);
         setIconColor(GetIconColor());
     }, [iconColor]);
     return (
@@ -58,18 +69,16 @@ const IdeaMenu = ({idea}) => {
                         <span className="text-lg">Report</span>
                     </DropdownMenuItem>
 
-                    {
-                        idea?.isMine &&(
-                            <DropdownMenuItem>
-                                <Trash
-                                    size={25}
-                                    className="mr-2"
-                                    color="rgb(107 114 128)"
-                                />
-                                <span className="text-lg">Delete</span>
-                            </DropdownMenuItem>
-                        )
-                    }
+                    {isMine && (
+                        <DropdownMenuItem>
+                            <Trash
+                                size={25}
+                                className="mr-2"
+                                color="rgb(107 114 128)"
+                            />
+                            <span className="text-lg">Delete</span>
+                        </DropdownMenuItem>
+                    )}
                     {/* <DropdownMenuSeparator /> */}
                 </DropdownMenuContent>
             </DropdownMenu>
