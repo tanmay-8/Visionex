@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_COMMENTS_IDEA } from "@/graphql/Queries";
 import { CREATE_COMMENT } from "@/graphql/Mutations";
 
-const Comments = ({ ideaId }) => {
+const Comments = ({ ideaId, isDetailed }) => {
     const theme = useAppSelector((state) => state.theme.theme);
     const [iconColor, setIconColor] = useState("");
     const [commentText, setCommentText] = useState("");
@@ -41,13 +41,13 @@ const Comments = ({ ideaId }) => {
 
     const handleCreateComment = async () => {
         try {
-            if(commentText.length === 0){
+            if (commentText.length === 0) {
                 return;
             }
             await createComment({
                 variables: {
                     commentInput: {
-                        ideaId:ideaId,
+                        ideaId: ideaId,
                         text: commentText,
                     },
                 },
@@ -62,17 +62,15 @@ const Comments = ({ ideaId }) => {
     return (
         <Drawer
             className={`border-none ${
-                theme === "dark" ? "bg-dark-bg-sec" : "bg-light-bg-sec  py-2"
+                theme === "dark"
+                    ? "bg-dark-bg-sec text-light-bg"
+                    : "bg-light-bg-sec text-dark-bg  py-2"
             }`}
         >
             <DrawerTrigger asChild>
                 <div className="flex items-center cursor-pointer">
-                    <MessageSquare
-                        size={25}
-                        className="mr-2"
-                        color="rgb(107 114 128)"
-                    />
-                    <p>{commentsCount}</p>
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <p>{isDetailed ? <span className="hidden md:block">Comment</span> : commentsCount}</p>
                 </div>
             </DrawerTrigger>
             <DrawerContent

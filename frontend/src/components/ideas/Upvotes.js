@@ -6,7 +6,7 @@ import { GET_UPVOTES_IDEA } from "@/graphql/Queries";
 import { UPVOTE_IDEA } from "@/graphql/Mutations";
 import { set } from "date-fns";
 
-const Upvotes = ({ ideaId }) => {
+const Upvotes = ({ ideaId, isDetailed }) => {
     const [upvotesCount, setUpvotesCount] = useState(0);
     const [upvoted, setUpvoted] = useState(false);
 
@@ -48,16 +48,22 @@ const Upvotes = ({ ideaId }) => {
             }}
         >
             {!upvoted ? (
-                <Heart size={25} className="mr-2" color="rgb(107 114 128)" />
+                <Heart className="mr-2 h-4 w-4" />
             ) : (
                 <Heart
                     size={25}
                     fill="#419197"
-                    className="mr-2"
+                    className="mr-2 h-4 w-4"
                     color="#419197"
                 />
             )}
-            <p>{upvotesCount}</p>
+            <p>
+                {isDetailed ? (
+                    <span className="hidden md:block">Upvote</span>
+                ) : (
+                    <span>{upvotesCount}</span>
+                )}
+            </p>
         </div>
     );
 };

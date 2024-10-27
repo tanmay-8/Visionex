@@ -6,12 +6,15 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, MessageCircle, Share2, ChevronLeft } from "lucide-react";
+import { Heart, MessageCircle, Share2, ChevronLeft, CircleCheckBigIcon } from "lucide-react";
 import IdeaMenu from "./IdeaMenu";
 import IdeaMedia from "./IdeaMedia";
 import UserBanner from "../ui/UserBanner";
 import { getTimeString } from "@/lib/utils/otherUtils";
 import { useRouter } from "next/navigation";
+import Comments from "./Comment/Comments";
+import Upvotes from "./Upvotes";
+import { toast } from "sonner";
 
 export default function IdeaDetails({ ideaId }) {
     const theme = useAppSelector((state) => state.theme.theme);
@@ -39,29 +42,30 @@ export default function IdeaDetails({ ideaId }) {
                     >
                         <ChevronLeft className="h-6 w-6" />
                     </Button>
-                    <div className="flex items-center space-x-4">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setLiked(!liked)}
+                    <div className="flex items-center space-x-6">
+                        <Upvotes ideaId={ideaId} isDetailed />
+                        <Comments ideaId={ideaId} isDetailed />
+                        <div
+                            className="flex items-center cursor-pointer"
+                            onClick={async () => {
+                                await navigator.clipboard.writeText(
+                                    `${window.location.origin}/idea/${idea.id}`
+                                );
+                                toast("Link copied to clipboard", {
+                                    duration: 1000,
+                                    type: "success",
+                                    icon: (
+                                        <CircleCheckBigIcon
+                                            size={20}
+                                            color="#419197"
+                                        />
+                                    ),
+                                });
+                            }}
                         >
-                            <Heart
-                                className={`mr-2 h-4 w-4 ${
-                                    liked ? "fill-red-500 text-red-500" : ""
-                                }`}
-                            />
-                            <span className="hidden md:block">
-                                {liked ? "Liked" : "Like"}
-                            </span>
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                            <MessageCircle className="mr-2 h-4 w-4" />
-                            <span className="hidden md:block">Comment</span>
-                        </Button>
-                        <Button variant="ghost" size="sm">
                             <Share2 className="mr-2 h-4 w-4" />
                             <span className="hidden md:block">Share</span>
-                        </Button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -134,13 +138,6 @@ export default function IdeaDetails({ ideaId }) {
                             {idea?.description}
                         </p>
                     )}
-                </section>
-
-                <section className="mb-12">
-                    <h3 className="text-2xl font-semibold mb-4">Comments</h3>
-                    <p className="text-muted-foreground">
-                        No comments yet. Be the first to comment!
-                    </p>
                 </section>
 
                 <section>

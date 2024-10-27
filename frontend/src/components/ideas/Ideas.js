@@ -24,7 +24,8 @@ const Ideas = ({ page, query }) => {
 
     const router = useRouter();
     const handlePageChange = (page) => {
-        router.push(`/explore?query=${query}&page=${page}`);
+        if (!query || query === "") router.push(`/explore?page=${page}`);
+        else router.push(`/explore?query=${query}&page=${page}`);
     };
     const dispatch = useAppDispatch();
     useEffect(() => {

@@ -64,7 +64,7 @@ const Profile = ({ params }) => {
     return (
         <div className="space-y-8 w-full h-full">
             <div className="w-full bg-light-bg-sec  dark:bg-dark-bg-sec rounded-lg relative">
-                <EllipsisVertical className="absolute top-4 right-4 cursor-pointer" />
+                {/* <EllipsisVertical className="absolute top-4 right-4 cursor-pointer" /> */}
                 <div className="flex flex-col gap-2 lg:gap-6 items-center lg:flex-row lg:items-start w-full p-4 pb-2">
                     <div className="w-[140px] h-[140px] bg-gray-100 rounded-full mt-2 mb-2">
                         <Image

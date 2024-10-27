@@ -487,6 +487,7 @@ class IdeaService {
             return { error: err.message, success: false };
         }
     }
+    
 }
 
 module.exports = { ideaService: new IdeaService() };

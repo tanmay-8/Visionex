@@ -234,6 +234,14 @@ export const GET_USER_PROFILE = gql`
                 comments {
                     text
                     ideaId
+                    idea {
+                        title
+                    }
+                    createdAt
+                }
+                upvotes {
+                    ideaId
+                    createdAt
                 }
                 followers {
                     username
@@ -246,6 +254,20 @@ export const GET_USER_PROFILE = gql`
                 isFollowed
                 isFollowing
                 isSelf
+            }
+        }
+    }
+`;
+
+export const GET_USER_COMMENTS = gql`
+    query GetUserComments {
+        getUserComments {
+            comments {
+                id
+                text
+                ideaId
+                createdAt
+                updatedAt
             }
         }
     }

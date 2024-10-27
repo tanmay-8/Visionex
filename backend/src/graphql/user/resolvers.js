@@ -45,9 +45,18 @@ const queries = {
             return { error: "Not authenticated", success: false };
         }
         const res = await userService.getFollowers(authToken, username);
-        console.log(res);   
+        console.log(res);
         if (res.success) return res.followers;
         else return [];
+    },
+    getUserComments: async (_, __, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated", success: false };
+        }
+        const res = await userService.getUserComments(authToken);
+        if (res.success) return res.comments;
+        else return { error: res.error, success: false };
     },
 };
 
