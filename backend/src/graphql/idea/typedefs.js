@@ -65,6 +65,7 @@ const typeDefs = `#graphql
         createdAt:String!
         updatedAt:String!
         isMine:Boolean!
+        isSaved:Boolean!
     }
 
     input IdeaInput{

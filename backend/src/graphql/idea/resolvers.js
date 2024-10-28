@@ -176,6 +176,25 @@ const mutations = {
             };
         }
     },
+    saveIdea: async (_, { ideaId }, context) => {
+        const authToken = context.req.req.headers.authtoken;
+        if (!authToken) {
+            return { error: "Not authenticated" };
+        }
+        const res = await ideaService.saveIdea(ideaId, authToken);
+
+        if (res.success) {
+            return {
+                success: true,
+                message: res.message,
+            };
+        } else {
+            return {
+                error: res.error,
+                success: false,
+            };
+        }
+    },
 };
 
 const resolvers = {

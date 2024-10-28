@@ -147,6 +147,14 @@ class IdeaService {
                         "PostVideos"
                     );
                     idea.isMine = user.id === idea.ownerId;
+                    idea.isSaved = await prismaClient.savedIdea
+                        .findFirst({
+                            where: {
+                                ideaId: idea.id,
+                                userId: user.id,
+                            },
+                        })
+                        .then((res) => (res ? true : false));
 
                     if (idea.owner.profileImageUrl) {
                         idea.owner.profileImageUrl = (
@@ -487,7 +495,41 @@ class IdeaService {
             return { error: err.message, success: false };
         }
     }
-    
+
+    async saveIdea(ideaId, authtoken) {
+        try {
+            const user = await this.handleAuth(authtoken);
+
+            const savedIdea = await prismaClient.savedIdea.findFirst({
+                where: {
+                    ideaId,
+                    userId: user.id,
+                },
+            });
+
+            if (savedIdea) {
+                await prismaClient.savedIdea.delete({
+                    where: {
+                        id: savedIdea.id,
+                    },
+                });
+
+                return { success: true, message: "Idea unsaved" };
+            }
+
+            await prismaClient.savedIdea.create({
+                data: {
+                    ideaId,
+                    userId: user.id,
+                },
+            });
+
+            return { success: true, message: "Idea saved" };
+        } catch (err) {
+            console.error(err);
+            return { error: err.message, success: false };
+        }
+    }
 }
 
 module.exports = { ideaService: new IdeaService() };

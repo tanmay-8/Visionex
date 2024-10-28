@@ -58,7 +58,10 @@ model Idea {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   savedBy       SavedIdea[] @relation("SavedIdeas")
-
+  email         String
+  instagram     String
+  twitter       String
+  linkedin      String
   @@map("ideas")
 }
 

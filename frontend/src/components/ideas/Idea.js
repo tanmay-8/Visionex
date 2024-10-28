@@ -3,23 +3,28 @@ import React, { useEffect, useState } from "react";
 import IdeaMenu from "./IdeaMenu";
 import UserBanner from "../ui/UserBanner";
 import Image from "next/image";
-import {
-    CircleCheckBig,
-    Share,
-} from "lucide-react";
+import { CircleCheckBig, SaveIcon, Share } from "lucide-react";
 import Comments from "./Comment/Comments";
 import { getTimeString } from "@/lib/utils/otherUtils";
 import Upvotes from "./Upvotes";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import GetIconColor from "@/lib/utils/GetIconColor";
 
 const Idea = ({ idea }) => {
     const router = useRouter();
     const [isMine, setIsMine] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
+    const [iconColor, setIconColor] = useState("#374151");
 
     useEffect(() => {
+        console.log(isMine);
+        setIconColor(GetIconColor());
+    }, [iconColor]);
+    useEffect(() => {
         setIsMine(idea.isMine);
+        setIsSaved(idea.isSaved);
     }, [idea]);
     return (
         <div className="flex flex-col p-4 md:p-6 space-y-3  bg-light-bg-sec dark:bg-dark-bg-sec rounded-xl shadow-sm w-full min-h-72">
@@ -39,7 +44,12 @@ const Idea = ({ idea }) => {
                     </div>
                 </div>
                 <div>
-                    <IdeaMenu isMine={idea.isMine} />
+                    <IdeaMenu
+                        ideaId={idea.id}
+                        isMine={isMine}
+                        isSaved={isSaved}
+                        setIsSaved={setIsSaved}
+                    />
                 </div>
             </div>
             <div>

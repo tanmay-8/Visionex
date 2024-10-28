@@ -142,6 +142,15 @@ export const UPVOTE_IDEA = gql`
     }
 `;
 
+export const SAVE_IDEA = gql`
+    mutation SaveIdea($ideaId: ID!) {
+        saveIdea(ideaId: $ideaId) {
+            success
+            error
+        }
+    }
+`;
+
 export const CREATE_COMMENT = gql`
     mutation Mutation($commentInput: CommentInput!) {
         createComment(commentInput: $commentInput) {

@@ -25,6 +25,7 @@ export const GET_IDEAS = gql`
                     profileImageUrl
                 }
                 isMine
+                isSaved
             }
             pagination {
                 currentPage
