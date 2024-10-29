@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -32,11 +32,14 @@ const EditProfileImage = () => {
         const data = new FormData();
         data.append("photo", image);
         data.append("folder", "ProfileImages");
-        const res = await fetch("http://localhost:5000/api/image/uploadImage", {
-            method: "POST",
-            body: data,
-            authToken: localStorage.getItem("visionToken"),
-        });
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/image/uploadImage`,
+            {
+                method: "POST",
+                body: data,
+                authToken: localStorage.getItem("visionToken"),
+            }
+        );
         const resData = await res.json();
         if (resData.success) {
             return resData;
@@ -71,7 +74,7 @@ const EditProfileImage = () => {
         } finally {
             setIsLoading(false);
         }
-    };  
+    };
     return (
         <Dialog className="border-none font-main ">
             <DialogTrigger>

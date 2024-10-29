@@ -35,7 +35,7 @@ const AddIdeaImages = () => {
             data.append("photo", image);
             data.append("folder", "PostImages");
             const res = await fetch(
-                "http://localhost:5000/api/image/uploadImage",
+                `${process.env.NEXT_PUBLIC_API_URL}/api/image/uploadImage`,
                 {
                     method: "POST",
                     body: data,

@@ -25,7 +25,7 @@ const AddIdeaVideos = () => {
             data.append("video", video);
             data.append("folder", "PostVideos");
 
-            const res = await fetch("http://localhost:5000/api/video/uploadVideo", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/video/uploadVideo`, {
                 method: "POST",
                 body: data,
                 authToken: localStorage.getItem("visionToken"),
