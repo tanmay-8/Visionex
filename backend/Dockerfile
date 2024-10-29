@@ -11,6 +11,8 @@ RUN npm install nodemon -g
 
 COPY . .
 
+RUN npx prisma generate
+
 EXPOSE 5000
 
 CMD ["nodemon", "app.js"]

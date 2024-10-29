@@ -1,16 +1,6 @@
 version: "3.4"
 
 services:
-  postgres:
-    container_name: visionex-db
-    image: postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-
   redis:
     container_name: redis-stack
     image: redis/redis-stack:latest
@@ -31,28 +21,10 @@ services:
       - .env
     volumes:
       - ./backend:/app
-      - /app/node_modules 
-    command: ["nodemon", "app.js"] 
+      - /app/node_modules
+    command: ["nodemon", "app.js"]
     depends_on:
-      - postgres
       - redis
 
-  frontend:
-    container_name: visionex-frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    env_file:
-      - .env
-    volumes:
-      - ./frontend:/app  
-      - /app/node_modules  # Avoids overwriting node_modules
-    command: ["npm", "run", "dev"]
-    depends_on:
-      - backend
-
 volumes:
-  postgres_data:
   redis_data:
