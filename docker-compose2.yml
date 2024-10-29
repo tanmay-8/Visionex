@@ -1,0 +1,30 @@
+version: "3.4"
+
+services:
+  redis:
+    container_name: redis-stack
+    image: redis/redis-stack:latest
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - redis_data:/data
+
+  backend:
+    container_name: visionex-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules 
+    command: ["nodemon", "app.js"] 
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
