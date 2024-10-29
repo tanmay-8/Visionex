@@ -1,9 +1,12 @@
 "use client";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { React, useState } from "react";
 
 const Navbar = () => {
+    const pathname = usePathname();
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => {
         console.log("clicked");
@@ -15,6 +18,9 @@ const Navbar = () => {
     const user = useAppSelector((state) => state.user);
 
     if(!user.isLogged){
+        if(!pathname.includes("auth")){
+            router.push("/auth/login");
+        }
         return null;
     }
 
