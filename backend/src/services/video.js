@@ -63,7 +63,7 @@ class VideoService {
         }
     }
 
-    async createVideo({ fileName, ownerId, ideaId,folder }) {
+    async createmedia({ fileName, ownerId, ideaId,folder }) {
         try {
             const result = await this.makeUndeletable(folder+"/"+fileName);
             const video = await prismaClient.video.create({

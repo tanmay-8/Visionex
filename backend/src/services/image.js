@@ -63,7 +63,7 @@ class ImageService {
             return { error: err, success: false };
         }
     }
-    async createImage(input) {
+    async createMedia(input) {
         try {
             const { fileName, ownerId, ideaId,folder } = input;
             const result = await this.makeUndeletable(folder+"/"+fileName);
