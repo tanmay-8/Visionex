@@ -65,8 +65,11 @@ class ImageService {
     }
     async createMedia(input) {
         try {
-            const { fileName, ownerId, ideaId,folder } = input;
-            const result = await this.makeUndeletable(folder+"/"+fileName);
+            const { fileName, ownerId, ideaId, folder } = input;
+            const idea = await prismaClient.idea.findUnique({ 
+                where: { id: ideaId },
+            });
+            const result = await this.makeUndeletable(folder + "/" + fileName);
             if (result.success) {
                 const image = await prismaClient.image.create({
                     data: {
@@ -88,18 +91,17 @@ class ImageService {
             return { error: err, success: false };
         }
     }
-    async deleteImage(key){
-        try{
+    async deleteImage(key) {
+        try {
             const result = await deleteFile(key);
-            if(result.success){
-                return {success:true};
+            if (result.success) {
+                return { success: true };
+            } else {
+                return { error: "Error deleting image", success: false };
             }
-            else{
-                return {error:"Error deleting image", success:false};
-            }
-        }catch(err){
+        } catch (err) {
             console.log(err);
-            return {error:err, success:false};
+            return { error: err, success: false };
         }
     }
 }

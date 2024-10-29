@@ -54,33 +54,28 @@ class IdeaService {
 
             const { images, videos, ...ideaData } = input;
 
-            const result = await prismaClient.$transaction(async (prisma) => {
-                const idea = await prisma.idea.create({
-                    data: { ...ideaData, ownerId: user.id },
-                });
-
-                if (images && images.length > 0) {
-                    await this.processMediaFiles(
-                        images,
-                        "PostImages",
-                        user.id,
-                        idea.id
-                    );
-                }
-
-                if (videos && videos.length > 0) {
-                    await this.processMediaFiles(
-                        videos,
-                        "PostVideos",
-                        user.id,
-                        idea.id
-                    );
-                }
-
-                return idea;
+            const idea = await prismaClient.idea.create({
+                data: { ...ideaData, ownerId: user.id },
             });
 
-            return { idea: result, success: true };
+            if (images && images.length > 0) {
+                await this.processMediaFiles(
+                    images,
+                    "PostImages",
+                    user.id,
+                    idea.id
+                );
+            }
+
+            if (videos && videos.length > 0) {
+                await this.processMediaFiles(
+                    videos,
+                    "PostVideos",
+                    user.id,
+                    idea.id
+                );
+            }
+            return { idea: idea, success: true };
         } catch (err) {
             console.error(err);
             return { error: err.message, success: false };

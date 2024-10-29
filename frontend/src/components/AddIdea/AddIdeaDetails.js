@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "../ui/button";
-import { ChevronRight, PlusIcon, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
-import { Separator } from "../ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import CategorySelect from "./CategorySelect";
 import AddIdeaImages from "./AddIdeaImages";
 import AddIdeaVideos from "./AddIdeaVideos";
@@ -19,79 +20,123 @@ import {
     setVisit,
     clearIdea,
 } from "@/lib/redux/features/addIdeaSlice";
-import MyAlert from "../auth/MyAlert";
-import IdeaAlert from "./IdeaAlert";
 import { isValidIdea } from "@/lib/utils/validators";
 import { useMutation } from "@apollo/client";
 import { CREATE_IDEA } from "@/graphql/Mutations";
+
+const StatusBar = ({ status, message, onClear }) => {
+    const getStatusColor = () => {
+        switch (status) {
+            case "loading":
+                return "bg-blue-500";
+            case "success":
+                return "bg-green-500";
+            case "error":
+                return "bg-red-500";
+            default:
+                return "bg-gray-500";
+        }
+    };
+
+    const getStatusIcon = () => {
+        switch (status) {
+            case "loading":
+                return <Loader2 className="h-5 w-5 animate-spin" />;
+            case "success":
+                return <CheckCircle className="h-5 w-5" />;
+            case "error":
+                return <AlertCircle className="h-5 w-5" />;
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div
+            className={`${getStatusColor()} text-white p-3 flex items-center justify-between transition-all duration-300 ease-in-out sticky top-0 z-10`}
+        >
+            <div className="flex items-center space-x-2">
+                {getStatusIcon()}
+                <span>{message}</span>
+            </div>
+            {status !== "idle" && (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClear}
+                    className="text-white hover:text-gray-800"
+                >
+                    Clear
+                </Button>
+            )}
+        </div>
+    );
+};
 
 const AddIdeaDetails = () => {
     const theme = useAppSelector((state) => state.theme.theme);
     const curIdea = useAppSelector((state) => state.addIdea);
     const dispatch = useAppDispatch();
-    const [open, setOpen] = useState(false);
+    const [status, setStatus] = useState("idle");
     const [message, setMessage] = useState("");
-    const [type, setType] = useState("success");
-    const [isLoading,setIsLoading] = useState(false);
-    const  [createIdea,{data:createIdeaData}] = useMutation(CREATE_IDEA);
+    const [createIdea] = useMutation(CREATE_IDEA);
+    const formRef = useRef(null);
 
-    const handleOpen = () => {
-        setOpen((s) => !s);
+    const clearStatus = () => {
+        setStatus("idle");
+        setMessage("");
     };
+
+    useEffect(() => {
+        if (status !== "idle") {
+            formRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [status]);
+
     const submitIdea = async (e) => {
         e.preventDefault();
         const isvalid = isValidIdea(curIdea);
         if (!isvalid.status) {
+            setStatus("error");
             setMessage(isvalid.message);
-            setOpen(true);
-            setType("error");
-            console.log(isvalid.message);
             return;
         }
-        setIsLoading(true);
-        setType("Loading")
+        setStatus("loading");
         setMessage("Sharing your vision with the world...");
-        setOpen(true);
-        try{
-            const res = await createIdea({variables:{
-                title:curIdea.title,
-                description:curIdea.description,
-                visit:curIdea.visit,
-                collaborators:curIdea.collaborators,
-                category:curIdea.category,
-                tags:curIdea.tags,
-                email:curIdea.email,
-                phone:curIdea.phone,
-                linkedin:curIdea.linkedin,
-                twitter:curIdea.twitter,
-                instagram:curIdea.instagram,
-                images:curIdea.images.map((image)=>image.key),
-                videos:curIdea.videos.map((video)=>video.key)
-            }});
-            console.log(res);
-            if(res.data.createIdea.success){
+        try {
+            const res = await createIdea({
+                variables: {
+                    title: curIdea.title,
+                    description: curIdea.description,
+                    visit: curIdea.visit,
+                    collaborators: curIdea.collaborators,
+                    category: curIdea.category,
+                    tags: curIdea.tags,
+                    email: curIdea.email,
+                    phone: curIdea.phone,
+                    linkedin: curIdea.linkedin,
+                    twitter: curIdea.twitter,
+                    instagram: curIdea.instagram,
+                    images: curIdea.images.map((image) => image.key),
+                    videos: curIdea.videos.map((video) => video.key),
+                },
+            });
+            if (res.data.createIdea.success) {
+                setStatus("success");
                 setMessage("Idea Added Successfully");
-                setOpen(true);
-                setType("success");
-                dispatch(clearIdea())
-            }else{
+                dispatch(clearIdea());
+            } else {
+                setStatus("error");
                 setMessage(res.data.createIdea.error);
-                setType("error");
-                setOpen(true);
             }
-        }
-        catch(err){
+        } catch (err) {
+            setStatus("error");
             setMessage(err.message);
-            setOpen(true);
-            setType("error");
-            console.log(err);
+            console.error(err);
         }
-        setIsLoading(false);
-        console.log(curIdea);
     };
 
     return (
-        // <Sheet className="bg-light-bg-sec dark:bg-dark-bg-sec" open={true}>
         <Sheet
             className={`${
                 theme === "light"
@@ -99,46 +144,51 @@ const AddIdeaDetails = () => {
                     : "bg-dark-bg text-light-text"
             } pb-10`}
         >
-            <IdeaAlert
-                message={message}
-                type={type}
-                open={open}
-                handleOpen={handleOpen}
-            />
-            <SheetTrigger>
-                <Button className="bg-main hover:scale-110 transition-all text-base  items-center text-white">
+            <SheetTrigger asChild>
+                <Button className="bg-main hover:scale-110 transition-all text-base items-center text-white">
                     Share
-                    <ChevronRight className="ml-1 h-5 w-5" color="white" />
+                    <ChevronRight className="ml-1 h-5 w-5" />
                 </Button>
             </SheetTrigger>
             <SheetContent
                 className="w-[95vw] md:min-w-[80vw] lg:min-w-[60vw] overflow-y-auto
-            border-none min-h-[100vh]"
+      border-none min-h-[100vh]"
             >
                 <div
+                    ref={formRef}
                     className={`${
                         theme === "light"
                             ? "bg-light-bg text-dark-text"
                             : "bg-dark-bg text-light-text"
-                    }   w-full min-h-full font-main`}
+                    } w-full min-h-full font-main`}
                 >
+                    {status !== "idle" && (
+                        <StatusBar
+                            status={status}
+                            message={message}
+                            onClear={clearStatus}
+                        />
+                    )}
                     <div className="px-4 md:px-8 py-4">
                         <h1 className="text-xl md:text-3xl font-semibold">
                             Add Idea
                         </h1>
                         <p className="font-medium md:text-lg text-gray-500 mt-1">
-                            Please enter you details.
+                            Please enter your details.
                         </p>
                     </div>
                     <Separator />
                     <form
                         onSubmit={submitIdea}
-                        className="w-full h-full  md:p-8 p-4 "
+                        className="w-full h-full md:p-8 p-4"
                     >
                         <div className="w-full h-full space-y-6">
                             <div className="w-full space-y-1">
-                                <Label className="text-lg">Title</Label>
+                                <Label htmlFor="title" className="text-lg">
+                                    Title
+                                </Label>
                                 <input
+                                    id="title"
                                     className={`w-full p-4 ${
                                         theme === "light"
                                             ? "bg-light-bg-sec text-dark-text"
@@ -146,15 +196,21 @@ const AddIdeaDetails = () => {
                                     } rounded-lg outline-none text-lg`}
                                     placeholder="Title"
                                     value={curIdea.title}
-                                    onChange={(e) => {
-                                        dispatch(setTitle(e.target.value));
-                                    }}
+                                    onChange={(e) =>
+                                        dispatch(setTitle(e.target.value))
+                                    }
                                 />
                             </div>
                             <div className={`w-full space-y-1`}>
-                                <Label className="text-lg">Description</Label>
+                                <Label
+                                    htmlFor="description"
+                                    className="text-lg"
+                                >
+                                    Description
+                                </Label>
                                 <Textarea
-                                    placeholder={"Description"}
+                                    id="description"
+                                    placeholder="Description"
                                     spellCheck={false}
                                     className={`rounded-lg border-none outline-none h-64 text-lg ${
                                         theme === "light"
@@ -162,11 +218,9 @@ const AddIdeaDetails = () => {
                                             : "bg-dark-bg-sec text-light-text"
                                     }`}
                                     value={curIdea.description}
-                                    onChange={(e) => {
-                                        dispatch(
-                                            setDescription(e.target.value)
-                                        );
-                                    }}
+                                    onChange={(e) =>
+                                        dispatch(setDescription(e.target.value))
+                                    }
                                 />
                             </div>
                             <div className="space-y-1">
@@ -194,21 +248,24 @@ const AddIdeaDetails = () => {
                                 <AddTags />
                             </div>
                             <div className="space-y-1 w-full">
-                                <Label className="text-lg">Collborators</Label>
+                                <Label className="text-lg">Collaborators</Label>
                                 <AddCollaborators />
                             </div>
                             <div className="w-full space-y-1">
-                                <Label className="text-lg">Link</Label>
+                                <Label htmlFor="link" className="text-lg">
+                                    Link
+                                </Label>
                                 <input
+                                    id="link"
                                     className={`w-full p-4 ${
                                         theme === "light"
                                             ? "bg-light-bg-sec text-dark-text"
                                             : "bg-dark-bg-sec text-light-text"
                                     } rounded-lg outline-none text-lg`}
                                     placeholder="Link"
-                                    onChange={(e) => {
-                                        dispatch(setVisit(e.target.value));
-                                    }}
+                                    onChange={(e) =>
+                                        dispatch(setVisit(e.target.value))
+                                    }
                                 />
                             </div>
                             <div className="w-full space-y-1">
@@ -216,14 +273,12 @@ const AddIdeaDetails = () => {
                                 <OtherLinks />
                             </div>
                             <div className="flex p-2 space-x-6">
-                                <button
-                                    className={`${
-                                        theme === "light" ? "" : ""
-                                    } bg-main hover:scale-110 transition-all text-lg  items-center text-white py-3 w-40 rounded-lg shadow-sm`}
+                                <Button
                                     type="submit"
+                                    className="bg-main hover:scale-110 transition-all text-lg items-center text-white py-3 w-40 rounded-lg shadow-sm"
                                 >
                                     Add
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </form>
