@@ -11,6 +11,21 @@ import { setCategory } from "@/lib/redux/features/addIdeaSlice";
 
 const CategorySelect = () => {
     const dispatch = useAppDispatch();
+
+    const categories = [
+        "Technology",
+        "Environment",
+        "Education",
+        "Healthcare",
+        "Agriculture",
+        "Finance",
+        "Transportation",
+        "Energy",
+        "Social Impact",
+        "Arts & Culture",
+        "Other",
+    ];
+
     return (
         <div>
             <Select
@@ -21,14 +36,19 @@ const CategorySelect = () => {
             >
                 <SelectTrigger className="w-full bg-none">
                     <SelectValue
-                        placeholder="Category"
+                        placeholder="Select Category"
                         className="text-lg bg-none"
                     />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    {categories.map((category) => (
+                        <SelectItem
+                            key={category}
+                            value={category.toLowerCase().replace(" ", "-")}
+                        >
+                            {category}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
         </div>

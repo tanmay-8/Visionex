@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_IDEA } from "@/graphql/Queries";
@@ -6,7 +7,18 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, MessageCircle, Share2, ChevronLeft, CircleCheckBigIcon } from "lucide-react";
+import {
+    Heart,
+    MessageCircle,
+    Share2,
+    ChevronLeft,
+    CircleCheckBigIcon,
+    Mail,
+    Instagram,
+    Twitter,
+    Linkedin,
+    Link,
+} from "lucide-react";
 import IdeaMenu from "./IdeaMenu";
 import IdeaMedia from "./IdeaMedia";
 import UserBanner from "../ui/UserBanner";
@@ -15,6 +27,7 @@ import { useRouter } from "next/navigation";
 import Comments from "./Comment/Comments";
 import Upvotes from "./Upvotes";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export default function IdeaDetails({ ideaId }) {
     const theme = useAppSelector((state) => state.theme.theme);
@@ -137,6 +150,119 @@ export default function IdeaDetails({ ideaId }) {
                         <p className="text-lg leading-relaxed">
                             {idea?.description}
                         </p>
+                    )}
+                </section>
+
+                <section className="mb-12">
+                    {loading ? (
+                        <Skeleton className="h-32 w-full" />
+                    ) : (
+                        <>
+                            {idea?.category && (
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold mb-2">
+                                        Category
+                                    </h3>
+                                    <Badge variant="secondary">
+                                        {idea.category}
+                                    </Badge>
+                                </div>
+                            )}
+                            {idea?.tags && idea.tags.length > 0 && (
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold mb-2">
+                                        Tags
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2 text-dark-bg dark:text-light-bg">
+                                        {idea.tags.map((tag, index) => (
+                                            <Badge
+                                                key={index}
+                                                variant="outline"
+                                            >
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {idea?.collaborators &&
+                                idea.collaborators.length > 0 && (
+                                    <div className="mb-4">
+                                        <h3 className="text-lg font-semibold mb-2">
+                                            Collaborators
+                                        </h3>
+                                        <ul className="list-disc list-inside">
+                                            {idea.collaborators.map(
+                                                (collaborator, index) => (
+                                                    <li key={index}>
+                                                        {collaborator}
+                                                    </li>
+                                                )
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+                            {idea?.visit && (
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold mb-2">
+                                        Visit
+                                    </h3>
+                                    <a
+                                        href={idea.visit}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 hover:underline flex items-center"
+                                    >
+                                        <Link className="mr-2" />
+                                        {idea.visit}
+                                    </a>
+                                </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                {idea?.email && (
+                                    <a
+                                        href={`mailto:${idea.email}`}
+                                        className="flex items-center text-muted-foreground hover:text-foreground"
+                                    >
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        {idea.email}
+                                    </a>
+                                )}
+                                {idea?.instagram && (
+                                    <a
+                                        href={`https://instagram.com/${idea.instagram}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center text-muted-foreground hover:text-foreground"
+                                    >
+                                        <Instagram className="mr-2 h-4 w-4" />
+                                        {idea.instagram}
+                                    </a>
+                                )}
+                                {idea?.twitter && (
+                                    <a
+                                        href={`https://twitter.com/${idea.twitter}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center text-muted-foreground hover:text-foreground"
+                                    >
+                                        <Twitter className="mr-2 h-4 w-4" />
+                                        {idea.twitter}
+                                    </a>
+                                )}
+                                {idea?.linkedin && (
+                                    <a
+                                        href={idea.linkedin}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center text-muted-foreground hover:text-foreground"
+                                    >
+                                        <Linkedin className="mr-2 h-4 w-4" />
+                                        LinkedIn
+                                    </a>
+                                )}
+                            </div>
+                        </>
                     )}
                 </section>
 

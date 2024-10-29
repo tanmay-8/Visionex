@@ -247,10 +247,10 @@ const AddIdeaDetails = () => {
                                 <Label className="text-lg">Tags</Label>
                                 <AddTags />
                             </div>
-                            <div className="space-y-1 w-full">
+                            {/* <div className="space-y-1 w-full">
                                 <Label className="text-lg">Collaborators</Label>
                                 <AddCollaborators />
-                            </div>
+                            </div> */}
                             <div className="w-full space-y-1">
                                 <Label htmlFor="link" className="text-lg">
                                     Link
