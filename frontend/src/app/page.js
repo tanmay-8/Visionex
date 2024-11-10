@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/lib/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { login } from "@/lib/redux/features/userSlice";
+import LandingPage from "@/components/Home/Landing";
 
 const Home = () => {
     const [token, setToken] = useState(null);
@@ -17,10 +18,12 @@ const Home = () => {
         setToken(curToken);
         if (curToken) {
             dispatch(login(token));
-        } else {
-            router.push("/auth/login");
         }
     }, [token]);
+
+    if (!token) {
+        return <LandingPage />;
+    }
     return (
         <div className="w-full h-full space-y-10 ">
             {token && (

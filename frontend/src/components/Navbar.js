@@ -17,8 +17,8 @@ const Navbar = () => {
     };
     const user = useAppSelector((state) => state.user);
 
-    if(!user.isLogged){
-        if(!pathname.includes("auth")){
+    if (!user.isLogged) {
+        if (!pathname.includes("auth") && pathname !== "/") {
             router.push("/auth/login");
         }
         return null;
